@@ -7,44 +7,79 @@ class ChoseList {
     constructor() {
         this.list = [];
         this.callbacks = [];
-        this.history = []; // 操作历史，用于撤销
+        this.history = []; // 操作历史，使用状态快照
     }
 
     /**
-     * 添加元素到列表（如果已存在则移除，实现切换选择状态）
+     * 保存当前状态到历史记录
+     * @private
+     */
+    _saveState() {
+        this.history.push([...this.list]);
+    }
+
+    /**
+     * 添加单个元素到列表（如果已存在则移除，实现切换选择状态）
      * @param {HTMLElement} element - 要添加/移除的DOM元素
      * @returns {boolean} - 操作是否成功
      */
     add(element) {
+        // 保存操作前的状态
+        this._saveState();
+        
         const index = this.list.indexOf(element);
         if (index > -1) {
             // 元素已存在，移除它
             this.list.splice(index, 1);
-            // 记录操作历史
-            this.history.push({ action: 'remove', element: element });
             this._triggerCallbacks('remove', element);
-            return true;
         } else {
             // 元素不存在，添加它
             this.list.push(element);
-            // 记录操作历史
-            this.history.push({ action: 'add', element: element });
             this._triggerCallbacks('add', element);
-            return true;
         }
+        return true;
     }
 
     /**
-     * 从列表中移除元素
+     * 批量添加元素到列表
+     * @param {Array<HTMLElement>} elements - 要添加的DOM元素数组
+     * @returns {boolean} - 操作是否成功
+     */
+    addBatch(elements) {
+        if (!elements || elements.length === 0) {
+            return false;
+        }
+        
+        // 保存操作前的状态
+        this._saveState();
+        
+        // 使用Set优化去重检查，时间复杂度从O(n²)降至O(n)
+        const existingSet = new Set(this.list);
+        const addedElements = elements.filter(element => !existingSet.has(element));
+        
+        // 添加所有不重复的元素
+        addedElements.forEach(element => {
+            this.list.push(element);
+            existingSet.add(element); // 更新Set，避免重复添加
+        });
+        
+        if (addedElements.length > 0) {
+            this._triggerCallbacks('batchAdd', addedElements);
+        }
+        return true;
+    }
+
+    /**
+     * 从列表中移除单个元素
      * @param {HTMLElement} element - 要移除的DOM元素
      * @returns {boolean} - 移除是否成功
      */
     remove(element) {
         const index = this.list.indexOf(element);
         if (index > -1) {
+            // 保存操作前的状态
+            this._saveState();
             this.list.splice(index, 1);
-            // 记录操作历史
-            this.history.push({ action: 'remove', element: element });
             this._triggerCallbacks('remove', element);
             return true;
         }
@@ -52,18 +87,49 @@ class ChoseList {
     }
 
     /**
+     * 批量移除元素
+     * @param {Array<HTMLElement>} elements - 要移除的DOM元素数组
+     * @returns {boolean} - 操作是否成功
+     */
+    removeBatch(elements) {
+        if (!elements || elements.length === 0) {
+            return false;
+        }
+        
+        // 保存操作前的状态
+        this._saveState();
+        
+        const removedElements = [];
+        elements.forEach(element => {
+            const index = this.list.indexOf(element);
+            if (index > -1) {
+                this.list.splice(index, 1);
+                removedElements.push(element);
+            }
+        });
+        
+        if (removedElements.length > 0) {
+            this._triggerCallbacks('batchRemove', removedElements);
+        }
+        return true;
+    }
+
+    /**
      * 清空列表
      */
     clear() {
+        if (this.list.length === 0) {
+            return;
+        }
+        // 保存操作前的状态
+        this._saveState();
         const removedElements = [...this.list];
         this.list = [];
-        // 记录操作历史
-        this.history.push({ action: 'clear', elements: removedElements });
         this._triggerCallbacks('clear', removedElements);
     }
 
     /**
-     * 撤销上一次操作
+     * 撤销上一次操作（使用状态快照）
      * @returns {boolean} - 撤销是否成功
      */
     undo() {
@@ -71,29 +137,21 @@ class ChoseList {
             return false;
         }
         
-        const lastAction = this.history.pop();
+        const previousState = this.history.pop();
+        const currentList = [...this.list];
         
-        if (lastAction.action === 'add') {
-            // 撤销添加操作，即移除元素
-            const index = this.list.indexOf(lastAction.element);
-            if (index > -1) {
-                this.list.splice(index, 1);
-                this._triggerCallbacks('remove', lastAction.element);
-            }
-        } else if (lastAction.action === 'remove') {
-            // 撤销移除操作，即添加元素
-            if (!this.list.includes(lastAction.element)) {
-                this.list.push(lastAction.element);
-                this._triggerCallbacks('add', lastAction.element);
-            }
-        } else if (lastAction.action === 'clear') {
-            // 撤销清空操作，即重新添加所有元素
-            lastAction.elements.forEach(element => {
-                if (!this.list.includes(element)) {
-                    this.list.push(element);
-                    this._triggerCallbacks('add', element);
-                }
-            });
+        // 恢复到之前的状态
+        this.list = [...previousState];
+        
+        // 计算差异，触发回调
+        const added = this.list.filter(el => !currentList.includes(el));
+        const removed = currentList.filter(el => !this.list.includes(el));
+        
+        if (removed.length > 0) {
+            removed.forEach(el => this._triggerCallbacks('remove', el));
+        }
+        if (added.length > 0) {
+            added.forEach(el => this._triggerCallbacks('add', el));
         }
         
         return true;
@@ -153,7 +211,7 @@ class ChoseList {
     /**
      * 触发回调函数
      * @private
-     * @param {string} action - 操作类型：add、remove、clear
+     * @param {string} action - 操作类型：add、remove、clear、batchAdd、batchRemove
      * @param {*} data - 操作数据
      */
     _triggerCallbacks(action, data) {

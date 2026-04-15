@@ -3,6 +3,9 @@
  * 功能：统一管理选择器，为选中元素添加边框示意，并同步更新位置
  */
 
+// 选择管理器不需要直接依赖扩选工具
+// 扩选工具会通过choseList间接与管理器交互
+
 // 存储元素与表示框的映射
 const elementBoxMap = new Map();
 
@@ -104,6 +107,22 @@ choseList.on((action, data) => {
         console.log('移除元素:', data);
         // 移除元素的表示框
         removeMarkerBox(data);
+        // 同步所有表示框位置
+        syncAllMarkerBoxes();
+    } else if (action === 'batchAdd') {
+        console.log('批量添加元素:', data);
+        // 为所有新元素创建表示框
+        data.forEach(element => {
+            createMarkerBox(element);
+        });
+        // 同步所有表示框位置
+        syncAllMarkerBoxes();
+    } else if (action === 'batchRemove') {
+        console.log('批量移除元素:', data);
+        // 移除所有元素的表示框
+        data.forEach(element => {
+            removeMarkerBox(element);
+        });
         // 同步所有表示框位置
         syncAllMarkerBoxes();
     } else if (action === 'clear') {
