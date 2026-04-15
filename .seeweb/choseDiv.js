@@ -194,7 +194,8 @@ selectionBox.addEventListener('click', function () {
     console.log('点击选择框')
     const selectedElement = hoveredElementsCache[currentIndex]
     console.log(selectedElement)
-    disableChoseDiv() // 点击选择框后禁用选择器
+    choseList.add(selectedElement)
+    // disableChoseDiv() // 点击选择框后禁用选择器
 })
 
 // 启用/禁用选择框的公共函数
@@ -227,6 +228,11 @@ function disableChoseDiv() {
 document.addEventListener('keydown', function (e) {
     if (e.key === 'Escape') {
         disableChoseDiv()
+    }
+    // 按Ctrl+Z撤销上一次操作
+    else if (e.ctrlKey && e.key === 'z') {
+        e.preventDefault() // 阻止默认的撤销行为
+        choseList.undo()
     }
 })
 
