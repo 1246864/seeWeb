@@ -90,35 +90,21 @@ class ChoseUI {
         document.head.appendChild(style)
     }
     
-    // 获取选择器实例的辅助方法
-    _getChoseDiv() {
-        return window.choseDiv || null;
-    }
-    
-    _getChoseRect() {
-        return window.choseRect || null;
-    }
-
     // 绑定事件
     _bindEvents() {
-
         // 单选模式按钮点击事件
         this.singleSelectBtn.addEventListener('click', () => {
             // 隐藏UI
             this.hide()
             
             // 禁用扩选模式
-            const choseRect = this._getChoseRect();
-            if (choseRect) {
-                choseRect.disable()
+            if (window.choseRect) {
+                window.choseRect.disable()
             }
             
             // 启用单选模式
-            const choseDiv = this._getChoseDiv();
-            if (choseDiv) {
-                choseDiv.enable()
-            } else {
-                console.warn('choseDiv is not available');
+            if (window.choseDiv) {
+                window.choseDiv.enable()
             }
         })
         
@@ -128,17 +114,13 @@ class ChoseUI {
             this.hide()
             
             // 禁用单选模式
-            const choseDiv = this._getChoseDiv();
-            if (choseDiv) {
-                choseDiv.disable()
+            if (window.choseDiv) {
+                window.choseDiv.disable()
             }
             
             // 启用扩选模式
-            const choseRect = this._getChoseRect();
-            if (choseRect) {
-                choseRect.enable()
-            } else {
-                console.warn('choseRect is not available');
+            if (window.choseRect) {
+                window.choseRect.enable()
             }
         })
         
@@ -149,14 +131,11 @@ class ChoseUI {
                 this.show()
                 
                 // 禁用所有选择模式
-                const choseDiv = this._getChoseDiv();
-                if (choseDiv) {
-                    choseDiv.disable()
+                if (window.choseDiv) {
+                    window.choseDiv.disable()
                 }
-                
-                const choseRect = this._getChoseRect();
-                if (choseRect) {
-                    choseRect.disable()
+                if (window.choseRect) {
+                    window.choseRect.disable()
                 }
             }
         })

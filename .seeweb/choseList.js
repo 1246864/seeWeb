@@ -53,14 +53,12 @@ class ChoseList {
         // 保存操作前的状态
         this._saveState();
         
-        // 使用Set优化去重检查，时间复杂度从O(n²)降至O(n)
-        const existingSet = new Set(this.list);
-        const addedElements = elements.filter(element => !existingSet.has(element));
-        
-        // 添加所有不重复的元素
-        addedElements.forEach(element => {
-            this.list.push(element);
-            existingSet.add(element); // 更新Set，避免重复添加
+        const addedElements = [];
+        elements.forEach(element => {
+            if (!this.list.includes(element)) {
+                this.list.push(element);
+                addedElements.push(element);
+            }
         });
         
         if (addedElements.length > 0) {

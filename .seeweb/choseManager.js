@@ -3,8 +3,13 @@
  * 功能：统一管理选择器，为选中元素添加边框示意，并同步更新位置
  */
 
-// 选择管理器不需要直接依赖扩选工具
-// 扩选工具会通过choseList间接与管理器交互
+// 导入扩选工具
+let choseRect;
+try {
+    choseRect = window.choseRect;
+} catch (e) {
+    // 如果在模块环境中
+}
 
 // 存储元素与表示框的映射
 const elementBoxMap = new Map();

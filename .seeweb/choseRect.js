@@ -172,16 +172,24 @@ if (typeof window !== 'undefined' && !window.ChoseRect) {
                     return;
                 }
                 
-                // 使用标准的矩形相交算法
-                // 检查两个矩形是否相交
-                const hasIntersection = rect.left < elementRect.right &&
-                    rect.right > elementRect.left &&
-                    rect.top < elementRect.bottom &&
-                    rect.bottom > elementRect.top;
+                // 检查元素是否完全在选择框内，或者与选择框有实际交集
+                // 检查元素与选择框有上下实际交集
+                const hasTopBottomIntersection = elementRect.top > rect.top &&
+                    elementRect.bottom < rect.bottom &&
+                    elementRect.left < rect.right &&
+                    elementRect.right > rect.left;
                 
-                // 如果有交集，选中元素
-                if (hasIntersection) {
+                // 检查元素与选择框有左右实际交集
+                const hasLeftRightIntersection = elementRect.left > rect.left &&
+                    elementRect.right < rect.right &&
+                    elementRect.top < rect.bottom &&
+                    elementRect.bottom > rect.top;
+                
+
+                // 如果完全在选择框内，或者与选择框有实际交集，直接选中
+                if (hasTopBottomIntersection || hasLeftRightIntersection) {
                     selectedElements.push(element);
+                    return;
                 }
             })
             

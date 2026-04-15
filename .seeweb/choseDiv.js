@@ -90,33 +90,27 @@ class ChoseDiv {
         document.head.appendChild(style)
     }
     
-    // 检查鼠标是否靠近右上角
-    _checkCornerDistance(e) {
-        // 检查鼠标是否靠近右上角
-        const windowWidth = window.innerWidth
-        const cornerDistance = this._calculateDistance(e.clientX, e.clientY, windowWidth - 20, 20)
-        
-        // 如果鼠标靠近右上角，隐藏提示框
-        if (cornerDistance < 300) {
-            this.exitHint.style.display = 'none'
-        } else {
-            if (this.isSelectionActive) {
-                this.exitHint.style.display = 'block'
-            }
-        }
-    }
-
     // 绑定事件
     _bindEvents() {
         // 鼠标移动事件
         document.addEventListener('mousemove', (e) => {
             if (!this.isSelectionActive) return;
             
-            // 检查鼠标是否靠近右上角
-            this._checkCornerDistance(e)
-
             // 计算鼠标移动距离
             const distance = this._calculateDistance(this.lastMouseX, this.lastMouseY, e.clientX, e.clientY)
+
+            // 检查鼠标是否靠近右上角
+            const windowWidth = window.innerWidth
+            const cornerDistance = this._calculateDistance(e.clientX, e.clientY, windowWidth - 20, 20)
+            
+            // 如果鼠标靠近右上角，隐藏提示框
+            if (cornerDistance < 300) {
+                this.exitHint.style.display = 'none'
+            } else {
+                if (this.isSelectionActive) {
+                    this.exitHint.style.display = 'block'
+                }
+            }
 
             // 如果移动距离超过阈值
             if (distance > this.MOUSE_MOVE_THRESHOLD) {
