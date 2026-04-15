@@ -53,15 +53,15 @@ class ChoseList {
         // 保存操作前的状态
         this._saveState();
         
-        const addedElements = [];
-        elements.forEach(element => {
-            if (!this.list.includes(element)) {
-                this.list.push(element);
-                addedElements.push(element);
-            }
-        });
+        // 使用Set优化去重检查，时间复杂度从O(n²)降低到O(n)
+        const existingSet = new Set(this.list);
+        const addedElements = elements.filter(element => !existingSet.has(element));
         
+        // 添加新元素
         if (addedElements.length > 0) {
+            addedElements.forEach(element => {
+                this.list.push(element);
+            });
             this._triggerCallbacks('batchAdd', addedElements);
         }
         return true;

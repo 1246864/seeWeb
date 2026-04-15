@@ -90,6 +90,21 @@ class ChoseDiv {
         document.head.appendChild(style)
     }
     
+    // 检查鼠标是否靠近右上角
+    _checkCornerDistance(x, y) {
+        const windowWidth = window.innerWidth
+        const cornerDistance = this._calculateDistance(x, y, windowWidth - 20, 20)
+        
+        // 如果鼠标靠近右上角，隐藏提示框
+        if (cornerDistance < 300) {
+            this.exitHint.style.display = 'none'
+        } else {
+            if (this.isSelectionActive) {
+                this.exitHint.style.display = 'block'
+            }
+        }
+    }
+
     // 绑定事件
     _bindEvents() {
         // 鼠标移动事件
@@ -100,17 +115,7 @@ class ChoseDiv {
             const distance = this._calculateDistance(this.lastMouseX, this.lastMouseY, e.clientX, e.clientY)
 
             // 检查鼠标是否靠近右上角
-            const windowWidth = window.innerWidth
-            const cornerDistance = this._calculateDistance(e.clientX, e.clientY, windowWidth - 20, 20)
-            
-            // 如果鼠标靠近右上角，隐藏提示框
-            if (cornerDistance < 300) {
-                this.exitHint.style.display = 'none'
-            } else {
-                if (this.isSelectionActive) {
-                    this.exitHint.style.display = 'block'
-                }
-            }
+            this._checkCornerDistance(e.clientX, e.clientY)
 
             // 如果移动距离超过阈值
             if (distance > this.MOUSE_MOVE_THRESHOLD) {
@@ -245,13 +250,7 @@ class ChoseDiv {
         // 检查鼠标是否靠近右上角
         const mouseX = this.lastMouseX || 0
         const mouseY = this.lastMouseY || 0
-        const windowWidth = window.innerWidth
-        const cornerDistance = this._calculateDistance(mouseX, mouseY, windowWidth - 20, 20)
-        
-        // 只有当鼠标不靠近右上角时才显示提示框
-        if (cornerDistance >= 100) {
-            this.exitHint.style.display = 'block'
-        }
+        this._checkCornerDistance(mouseX, mouseY)
         
         this.isSelectionActive = true
     }

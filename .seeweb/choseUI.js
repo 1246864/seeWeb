@@ -4,7 +4,11 @@
  */
 
 class ChoseUI {
-    constructor() {
+    constructor(options = {}) {
+        // 接收依赖注入
+        this.choseDiv = options.choseDiv || window.choseDiv;
+        this.choseRect = options.choseRect || window.choseRect;
+        
         // 创建UI容器
         this.container = document.createElement('div')
         this.container.className = 'choseUI'
@@ -98,13 +102,13 @@ class ChoseUI {
             this.hide()
             
             // 禁用扩选模式
-            if (window.choseRect) {
-                window.choseRect.disable()
+            if (this.choseRect) {
+                this.choseRect.disable()
             }
             
             // 启用单选模式
-            if (window.choseDiv) {
-                window.choseDiv.enable()
+            if (this.choseDiv) {
+                this.choseDiv.enable()
             }
         })
         
@@ -114,13 +118,13 @@ class ChoseUI {
             this.hide()
             
             // 禁用单选模式
-            if (window.choseDiv) {
-                window.choseDiv.disable()
+            if (this.choseDiv) {
+                this.choseDiv.disable()
             }
             
             // 启用扩选模式
-            if (window.choseRect) {
-                window.choseRect.enable()
+            if (this.choseRect) {
+                this.choseRect.enable()
             }
         })
         
@@ -131,11 +135,11 @@ class ChoseUI {
                 this.show()
                 
                 // 禁用所有选择模式
-                if (window.choseDiv) {
-                    window.choseDiv.disable()
+                if (this.choseDiv) {
+                    this.choseDiv.disable()
                 }
-                if (window.choseRect) {
-                    window.choseRect.disable()
+                if (this.choseRect) {
+                    this.choseRect.disable()
                 }
             }
         })

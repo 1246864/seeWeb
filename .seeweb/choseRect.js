@@ -189,7 +189,6 @@ if (typeof window !== 'undefined' && !window.ChoseRect) {
                 // 如果完全在选择框内，或者与选择框有实际交集，直接选中
                 if (hasTopBottomIntersection || hasLeftRightIntersection) {
                     selectedElements.push(element);
-                    return;
                 }
             })
             
