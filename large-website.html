@@ -746,12 +746,26 @@
             }
         });
     </script>
+    <link rel="stylesheet" href=".seeweb/seeweb.css">
+    <script src=".seeweb/choseList.js"></script>
+    <script src=".seeweb/choseDiv.js"></script>
+    <script src=".seeweb/choseRect.js"></script>
+    <script src=".seeweb/choseManager.js"></script>
+    <script src=".seeweb/choseUI.js"></script>
+    <script src=".seeweb/init.js"></script>
+    <script>
+        // 页面加载完成后初始化 SeeWeb
+        window.addEventListener('DOMContentLoaded', function() {
+            console.log('初始化 SeeWeb...');
+            const seeWeb = SeeWebInit.init();
+            if (seeWeb) {
+                console.log('SeeWeb 初始化成功！');
+                // 显示选择模式UI
+                seeWeb.choseUI.show();
+            } else {
+                console.error('SeeWeb 初始化失败！');
+            }
+        });
+    </script>
 </body>
 </html>
-
-<script src=".seeweb/choseList.js"></script>
-<script src=".seeweb/choseDiv.js"></script>
-<script src=".seeweb/choseRect.js"></script>
-<script src=".seeweb/choseManager.js"></script>
-<script src=".seeweb/choseUI.js"></script>
-<link rel="stylesheet" href=".seeweb/seeweb.css">

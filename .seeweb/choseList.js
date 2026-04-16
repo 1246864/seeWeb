@@ -1,13 +1,17 @@
 /**
  * 选中元素列表管理
  * 功能：管理选中的元素列表，并在列表修改时触发回调函数
+ * 职责：只负责选中元素的数据存储和操作历史管理，通过回调机制与其他模块通信
  */
 
 class ChoseList {
+    /**
+     * 构造函数
+     */
     constructor() {
-        this.list = [];
-        this.callbacks = [];
-        this.history = []; // 操作历史，使用状态快照
+        this.list = [];         // 选中元素列表
+        this.callbacks = [];     // 回调函数列表
+        this.history = [];       // 操作历史，使用状态快照
     }
 
     /**
@@ -223,15 +227,19 @@ class ChoseList {
     }
 }
 
-// 导出实例
-const choseList = new ChoseList();
+// 导出类（不直接创建实例，由外部负责依赖注入）
 
 // 如果你需要使用CommonJS模块导出
 if (typeof module !== 'undefined' && module.exports) {
-    module.exports = choseList;
+    module.exports = ChoseList;
 }
 
 // 如果你需要使用ES模块导出
 if (typeof exports !== 'undefined' && !exports.default) {
-    exports.default = choseList;
+    exports.default = ChoseList;
+}
+
+// 全局导出
+if (typeof window !== 'undefined') {
+    window.ChoseList = ChoseList;
 }

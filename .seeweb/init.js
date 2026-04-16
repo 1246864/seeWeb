@@ -1,0 +1,85 @@
+/**
+ * 初始化文件
+ * 功能：初始化所有模块，处理依赖注入，确保模块间正确连接
+ * 职责：负责创建所有实例并管理它们之间的依赖关系
+ */
+
+class SeeWebInit {
+    /**
+     * 初始化所有模块
+     * @returns {Object} 包含所有实例的对象
+     */
+    static init() {
+        try {
+            // 1. 创建选择列表实例（核心数据存储）
+            const choseList = new window.ChoseList();
+            
+            // 2. 创建选择模式UI实例
+            const choseUI = new window.ChoseUI({
+                choseList: choseList
+                // choseDiv 和 choseRect 将在后面注入
+            });
+            
+            // 3. 创建单选模式选择器实例
+            const choseDiv = new window.ChoseDiv({
+                choseList: choseList,
+                choseUI: choseUI
+            });
+            
+            // 4. 创建扩选模式选择器实例
+            const choseRect = new window.ChoseRect({
+                choseList: choseList,
+                choseUI: choseUI
+            });
+            
+            // 5. 注入依赖到 choseUI
+            choseUI.choseDiv = choseDiv;
+            choseUI.choseRect = choseRect;
+            
+            // 6. 创建选择管理器实例
+            const choseManager = new window.ChoseManager({
+                choseList: choseList
+            });
+            
+            // 7. 导出所有实例
+            const instances = {
+                choseList,
+                choseDiv,
+                choseRect,
+                choseUI,
+                choseManager
+            };
+            
+            // 8. 全局导出
+            if (typeof window !== 'undefined') {
+                window.seeWeb = instances;
+                window.choseList = choseList;
+                window.choseDiv = choseDiv;
+                window.choseRect = choseRect;
+                window.choseUI = choseUI;
+                window.choseManager = choseManager;
+            }
+            
+            console.log('SeeWeb 初始化完成');
+            return instances;
+        } catch (error) {
+            console.error('SeeWeb 初始化失败:', error);
+            return null;
+        }
+    }
+}
+
+// 全局导出
+if (typeof window !== 'undefined') {
+    window.SeeWebInit = SeeWebInit;
+}
+
+// 导出初始化方法（用于模块化环境）
+if (typeof module !== 'undefined' && module.exports) {
+    module.exports = SeeWebInit;
+}
+
+// 如果你需要使用ES模块导出
+if (typeof exports !== 'undefined' && !exports.default) {
+    exports.default = SeeWebInit;
+}
