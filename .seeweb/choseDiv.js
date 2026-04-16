@@ -95,10 +95,10 @@ class ChoseDiv {
     // 检查鼠标是否靠近右上角
     _checkCornerDistance(x, y) {
         const windowWidth = window.innerWidth
-        const cornerDistance = this._calculateDistance(x, y, windowWidth - 20, 20)
+        const cornerDistance = this._calculateDistance(x, y, windowWidth - 20, -200)
 
         // 如果鼠标靠近右上角，隐藏提示框
-        if (cornerDistance < 300) {
+        if (cornerDistance < 500) {
             this.exitHint.style.display = 'none'
         } else {
             if (this.isSelectionActive) {

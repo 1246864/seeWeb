@@ -1,0 +1,757 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>大型网站示例</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            background-color: #f5f5f5;
+        }
+        
+        /* 导航栏 */
+        .navbar {
+            background-color: #333;
+            color: white;
+            padding: 1rem 0;
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 2rem;
+        }
+        
+        .navbar .container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .logo {
+            font-size: 1.5rem;
+            font-weight: bold;
+        }
+        
+        .nav-links {
+            display: flex;
+            list-style: none;
+        }
+        
+        .nav-links li {
+            margin-left: 2rem;
+        }
+        
+        .nav-links a {
+            color: white;
+            text-decoration: none;
+            transition: color 0.3s ease;
+        }
+        
+        .nav-links a:hover {
+            color: #00bcd4;
+        }
+        
+        /* 英雄区 */
+        .hero {
+            background: linear-gradient(rgba(0,0,0,0.7), rgba(0,0,0,0.7)), url('https://trae-api-cn.mchost.guru/api/ide/v1/text_to_image?prompt=modern%20city%20skyline%20at%20sunset&image_size=landscape_16_9');
+            background-size: cover;
+            background-position: center;
+            color: white;
+            padding: 8rem 0;
+            text-align: center;
+        }
+        
+        .hero h1 {
+            font-size: 3.5rem;
+            margin-bottom: 1rem;
+        }
+        
+        .hero p {
+            font-size: 1.2rem;
+            margin-bottom: 2rem;
+        }
+        
+        .btn {
+            display: inline-block;
+            background-color: #00bcd4;
+            color: white;
+            padding: 0.8rem 1.5rem;
+            border: none;
+            border-radius: 4px;
+            text-decoration: none;
+            font-size: 1rem;
+            transition: background-color 0.3s ease;
+        }
+        
+        .btn:hover {
+            background-color: #0097a7;
+        }
+        
+        /* 功能区块 */
+        .features {
+            padding: 5rem 0;
+            background-color: white;
+        }
+        
+        .section-title {
+            text-align: center;
+            margin-bottom: 3rem;
+            font-size: 2.5rem;
+            color: #333;
+        }
+        
+        .features-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+        }
+        
+        .feature-card {
+            background-color: #f9f9f9;
+            padding: 2rem;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+        
+        .feature-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 5px 20px rgba(0,0,0,0.15);
+        }
+        
+        .feature-icon {
+            font-size: 3rem;
+            color: #00bcd4;
+            margin-bottom: 1rem;
+        }
+        
+        .feature-card h3 {
+            font-size: 1.5rem;
+            margin-bottom: 1rem;
+        }
+        
+        /* 产品展示 */
+        .products {
+            padding: 5rem 0;
+            background-color: #f5f5f5;
+        }
+        
+        .products-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 2rem;
+        }
+        
+        .product-card {
+            background-color: white;
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        
+        .product-img {
+            width: 100%;
+            height: 250px;
+            object-fit: cover;
+        }
+        
+        .product-info {
+            padding: 1.5rem;
+        }
+        
+        .product-info h3 {
+            font-size: 1.3rem;
+            margin-bottom: 0.5rem;
+        }
+        
+        .product-info p {
+            margin-bottom: 1rem;
+            color: #666;
+        }
+        
+        .product-price {
+            font-size: 1.2rem;
+            font-weight: bold;
+            color: #00bcd4;
+        }
+        
+        /* 客户评价 */
+        .testimonials {
+            padding: 5rem 0;
+            background-color: white;
+        }
+        
+        .testimonials-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+        }
+        
+        .testimonial-card {
+            background-color: #f9f9f9;
+            padding: 2rem;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        
+        .testimonial-text {
+            font-style: italic;
+            margin-bottom: 1.5rem;
+        }
+        
+        .testimonial-author {
+            display: flex;
+            align-items: center;
+        }
+        
+        .author-img {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            margin-right: 1rem;
+            object-fit: cover;
+        }
+        
+        .author-info h4 {
+            font-weight: bold;
+        }
+        
+        .author-info p {
+            color: #666;
+            font-size: 0.9rem;
+        }
+        
+        /* 联系表单 */
+        .contact {
+            padding: 5rem 0;
+            background-color: #f5f5f5;
+        }
+        
+        .contact-form {
+            background-color: white;
+            padding: 3rem;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            max-width: 800px;
+            margin: 0 auto;
+        }
+        
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+        
+        .form-group label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: bold;
+        }
+        
+        .form-group input,
+        .form-group textarea {
+            width: 100%;
+            padding: 0.8rem;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-size: 1rem;
+        }
+        
+        .form-group textarea {
+            resize: vertical;
+            min-height: 150px;
+        }
+        
+        /* 统计数据 */
+        .stats {
+            background-color: #333;
+            color: white;
+            padding: 4rem 0;
+        }
+        
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 2rem;
+            text-align: center;
+        }
+        
+        .stat-item h3 {
+            font-size: 2.5rem;
+            margin-bottom: 0.5rem;
+            color: #00bcd4;
+        }
+        
+        .stat-item p {
+            font-size: 1.1rem;
+        }
+        
+        /* 博客 */
+        .blog {
+            padding: 5rem 0;
+            background-color: white;
+        }
+        
+        .blog-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+        }
+        
+        .blog-card {
+            background-color: #f9f9f9;
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        
+        .blog-img {
+            width: 100%;
+            height: 200px;
+            object-fit: cover;
+        }
+        
+        .blog-info {
+            padding: 1.5rem;
+        }
+        
+        .blog-date {
+            color: #666;
+            font-size: 0.9rem;
+            margin-bottom: 0.5rem;
+        }
+        
+        .blog-info h3 {
+            font-size: 1.3rem;
+            margin-bottom: 0.5rem;
+        }
+        
+        .blog-info p {
+            margin-bottom: 1rem;
+            color: #666;
+        }
+        
+        .blog-link {
+            color: #00bcd4;
+            text-decoration: none;
+            font-weight: bold;
+        }
+        
+        .blog-link:hover {
+            text-decoration: underline;
+        }
+        
+        /* 页脚 */
+        .footer {
+            background-color: #333;
+            color: white;
+            padding: 3rem 0 1rem;
+        }
+        
+        .footer-content {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 2rem;
+            margin-bottom: 2rem;
+        }
+        
+        .footer-section h3 {
+            margin-bottom: 1rem;
+            color: #00bcd4;
+        }
+        
+        .footer-section p,
+        .footer-section li {
+            margin-bottom: 0.5rem;
+        }
+        
+        .footer-section ul {
+            list-style: none;
+        }
+        
+        .footer-section a {
+            color: #ddd;
+            text-decoration: none;
+        }
+        
+        .footer-section a:hover {
+            color: #00bcd4;
+        }
+        
+        .footer-bottom {
+            text-align: center;
+            padding-top: 2rem;
+            border-top: 1px solid #444;
+            color: #ddd;
+        }
+        
+        /* 响应式设计 */
+        @media (max-width: 768px) {
+            .nav-links {
+                display: none;
+            }
+            
+            .hero h1 {
+                font-size: 2.5rem;
+            }
+            
+            .container {
+                padding: 0 1rem;
+            }
+            
+            .contact-form {
+                padding: 2rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- 导航栏 -->
+    <nav class="navbar">
+        <div class="container">
+            <div class="logo">大型网站</div>
+            <ul class="nav-links">
+                <li><a href="#home">首页</a></li>
+                <li><a href="#features">功能</a></li>
+                <li><a href="#products">产品</a></li>
+                <li><a href="#testimonials">评价</a></li>
+                <li><a href="#contact">联系我们</a></li>
+                <li><a href="#blog">博客</a></li>
+            </ul>
+        </div>
+    </nav>
+    
+    <!-- 英雄区 -->
+    <section class="hero" id="home">
+        <div class="container">
+            <h1>欢迎来到大型网站示例</h1>
+            <p>这是一个功能丰富、设计精美的大型网站，展示了现代网页设计的各种元素和技术</p>
+            <a href="#features" class="btn">了解更多</a>
+        </div>
+    </section>
+    
+    <!-- 功能区块 -->
+    <section class="features" id="features">
+        <div class="container">
+            <h2 class="section-title">核心功能</h2>
+            <div class="features-grid">
+                <div class="feature-card">
+                    <div class="feature-icon">🚀</div>
+                    <h3>高性能</h3>
+                    <p>采用最新的前端技术，确保网站加载速度快，响应迅速，为用户提供流畅的浏览体验。</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">🎨</div>
+                    <h3>精美设计</h3>
+                    <p>现代化的设计风格，注重用户体验，采用优雅的配色方案和布局，营造专业的视觉效果。</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">📱</div>
+                    <h3>响应式</h3>
+                    <p>完全响应式设计，适配各种设备屏幕，从手机到桌面电脑，都能提供最佳的浏览体验。</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">🔒</div>
+                    <h3>安全可靠</h3>
+                    <p>采用先进的安全技术，保护用户数据和隐私，确保网站运行稳定可靠。</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">⚡</div>
+                    <h3>动态交互</h3>
+                    <p>丰富的交互效果，增强用户参与感，使网站更加生动有趣。</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">🌍</div>
+                    <h3>全球化</h3>
+                    <p>支持多语言，适应不同地区用户的需求，具有全球化视野。</p>
+                </div>
+            </div>
+        </div>
+    </section>
+    
+    <!-- 产品展示 -->
+    <section class="products" id="products">
+        <div class="container">
+            <h2 class="section-title">热门产品</h2>
+            <div class="products-grid">
+                <div class="product-card">
+                    <img src="https://trae-api-cn.mchost.guru/api/ide/v1/text_to_image?prompt=modern%20laptop%20computer&image_size=square" alt="产品1" class="product-img">
+                    <div class="product-info">
+                        <h3>超级笔记本电脑</h3>
+                        <p>搭载最新处理器，轻薄便携，性能强大，适合商务人士和专业用户。</p>
+                        <div class="product-price">¥9,999</div>
+                    </div>
+                </div>
+                <div class="product-card">
+                    <img src="https://trae-api-cn.mchost.guru/api/ide/v1/text_to_image?prompt=smart%20phone%20with%20modern%20design&image_size=square" alt="产品2" class="product-img">
+                    <div class="product-info">
+                        <h3>智能旗舰手机</h3>
+                        <p>高清屏幕，强大相机，超长续航，支持5G网络，是您的理想选择。</p>
+                        <div class="product-price">¥6,999</div>
+                    </div>
+                </div>
+                <div class="product-card">
+                    <img src="https://trae-api-cn.mchost.guru/api/ide/v1/text_to_image?prompt=wireless%20earbuds%20modern%20design&image_size=square" alt="产品3" class="product-img">
+                    <div class="product-info">
+                        <h3>无线蓝牙耳机</h3>
+                        <p>主动降噪，高清音质，舒适佩戴，续航持久，为您带来沉浸式听觉体验。</p>
+                        <div class="product-price">¥1,299</div>
+                    </div>
+                </div>
+                <div class="product-card">
+                    <img src="https://trae-api-cn.mchost.guru/api/ide/v1/text_to_image?prompt=smart%20watch%20fitness%20tracker&image_size=square" alt="产品4" class="product-img">
+                    <div class="product-info">
+                        <h3>智能手表</h3>
+                        <p>健康监测，运动追踪，智能通知，时尚设计，是您的健康生活伙伴。</p>
+                        <div class="product-price">¥1,999</div>
+                    </div>
+                </div>
+                <div class="product-card">
+                    <img src="https://trae-api-cn.mchost.guru/api/ide/v1/text_to_image?prompt=tablet%20device%20modern%20design&image_size=square" alt="产品5" class="product-img">
+                    <div class="product-info">
+                        <h3>平板电脑</h3>
+                        <p>高清屏幕，强大性能，轻薄便携，适合娱乐和办公，是您的移动生活助手。</p>
+                        <div class="product-price">¥3,999</div>
+                    </div>
+                </div>
+                <div class="product-card">
+                    <img src="https://trae-api-cn.mchost.guru/api/ide/v1/text_to_image?prompt=smart%20home%20speaker&image_size=square" alt="产品6" class="product-img">
+                    <div class="product-info">
+                        <h3>智能音箱</h3>
+                        <p>语音助手，高品质音效，智能家居控制，为您的家庭带来智能生活体验。</p>
+                        <div class="product-price">¥899</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+    
+    <!-- 统计数据 -->
+    <section class="stats">
+        <div class="container">
+            <div class="stats-grid">
+                <div class="stat-item">
+                    <h3>1000+</h3>
+                    <p>满意客户</p>
+                </div>
+                <div class="stat-item">
+                    <h3>50+</h3>
+                    <p>产品种类</p>
+                </div>
+                <div class="stat-item">
+                    <h3>10+</h3>
+                    <p>年行业经验</p>
+                </div>
+                <div class="stat-item">
+                    <h3>98%</h3>
+                    <p>客户满意度</p>
+                </div>
+            </div>
+        </div>
+    </section>
+    
+    <!-- 客户评价 -->
+    <section class="testimonials" id="testimonials">
+        <div class="container">
+            <h2 class="section-title">客户评价</h2>
+            <div class="testimonials-grid">
+                <div class="testimonial-card">
+                    <p class="testimonial-text">"这家公司的产品质量非常好，服务态度也很棒。我已经是他们的老客户了，每次购买都很满意。"</p>
+                    <div class="testimonial-author">
+                        <img src="https://trae-api-cn.mchost.guru/api/ide/v1/text_to_image?prompt=professional%20business%20man%20portrait&image_size=square" alt="客户1" class="author-img">
+                        <div class="author-info">
+                            <h4>张先生</h4>
+                            <p>企业CEO</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="testimonial-card">
+                    <p class="testimonial-text">"网站设计非常美观，功能齐全，使用起来很方便。客服响应速度快，解决问题很及时。"</p>
+                    <div class="testimonial-author">
+                        <img src="https://trae-api-cn.mchost.guru/api/ide/v1/text_to_image?prompt=professional%20business%20woman%20portrait&image_size=square" alt="客户2" class="author-img">
+                        <div class="author-info">
+                            <h4>李女士</h4>
+                            <p>市场总监</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="testimonial-card">
+                    <p class="testimonial-text">"产品性能超出预期，价格也很合理。网站的用户体验非常好，购物流程简单顺畅。"</p>
+                    <div class="testimonial-author">
+                        <img src="https://trae-api-cn.mchost.guru/api/ide/v1/text_to_image?prompt=young%20professional%20man%20portrait&image_size=square" alt="客户3" class="author-img">
+                        <div class="author-info">
+                            <h4>王先生</h4>
+                            <p>软件工程师</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+    
+    <!-- 博客 -->
+    <section class="blog" id="blog">
+        <div class="container">
+            <h2 class="section-title">最新博客</h2>
+            <div class="blog-grid">
+                <div class="blog-card">
+                    <img src="https://trae-api-cn.mchost.guru/api/ide/v1/text_to_image?prompt=technology%20trends%20blog%20image&image_size=landscape_4_3" alt="博客1" class="blog-img">
+                    <div class="blog-info">
+                        <div class="blog-date">2026年4月15日</div>
+                        <h3>2026年科技发展趋势</h3>
+                        <p>探讨未来科技发展的方向和趋势，包括人工智能、区块链、元宇宙等新兴技术的应用前景。</p>
+                        <a href="#" class="blog-link">阅读更多</a>
+                    </div>
+                </div>
+                <div class="blog-card">
+                    <img src="https://trae-api-cn.mchost.guru/api/ide/v1/text_to_image?prompt=business%20strategy%20blog%20image&image_size=landscape_4_3" alt="博客2" class="blog-img">
+                    <div class="blog-info">
+                        <div class="blog-date">2026年4月10日</div>
+                        <h3>企业数字化转型策略</h3>
+                        <p>分析企业如何通过数字化转型提升竞争力，包括技术选型、流程优化、人才培养等方面的建议。</p>
+                        <a href="#" class="blog-link">阅读更多</a>
+                    </div>
+                </div>
+                <div class="blog-card">
+                    <img src="https://trae-api-cn.mchost.guru/api/ide/v1/text_to_image?prompt=user%20experience%20design%20blog%20image&image_size=landscape_4_3" alt="博客3" class="blog-img">
+                    <div class="blog-info">
+                        <div class="blog-date">2026年4月5日</div>
+                        <h3>现代网页设计趋势</h3>
+                        <p>介绍当前网页设计的流行趋势，包括色彩搭配、排版技巧、交互设计等方面的最新理念。</p>
+                        <a href="#" class="blog-link">阅读更多</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+    
+    <!-- 联系表单 -->
+    <section class="contact" id="contact">
+        <div class="container">
+            <h2 class="section-title">联系我们</h2>
+            <form class="contact-form">
+                <div class="form-group">
+                    <label for="name">姓名</label>
+                    <input type="text" id="name" name="name" required>
+                </div>
+                <div class="form-group">
+                    <label for="email">邮箱</label>
+                    <input type="email" id="email" name="email" required>
+                </div>
+                <div class="form-group">
+                    <label for="subject">主题</label>
+                    <input type="text" id="subject" name="subject" required>
+                </div>
+                <div class="form-group">
+                    <label for="message">留言</label>
+                    <textarea id="message" name="message" required></textarea>
+                </div>
+                <button type="submit" class="btn">提交</button>
+            </form>
+        </div>
+    </section>
+    
+    <!-- 页脚 -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-section">
+                    <h3>关于我们</h3>
+                    <p>我们是一家专注于提供高品质产品和服务的公司，致力于为客户创造价值，推动行业发展。</p>
+                </div>
+                <div class="footer-section">
+                    <h3>快速链接</h3>
+                    <ul>
+                        <li><a href="#home">首页</a></li>
+                        <li><a href="#features">功能</a></li>
+                        <li><a href="#products">产品</a></li>
+                        <li><a href="#testimonials">评价</a></li>
+                        <li><a href="#contact">联系我们</a></li>
+                    </ul>
+                </div>
+                <div class="footer-section">
+                    <h3>联系方式</h3>
+                    <ul>
+                        <li>电话：123-4567-8910</li>
+                        <li>邮箱：info@example.com</li>
+                        <li>地址：北京市朝阳区某某大厦</li>
+                    </ul>
+                </div>
+                <div class="footer-section">
+                    <h3>关注我们</h3>
+                    <ul>
+                        <li><a href="#">微信</a></li>
+                        <li><a href="#">微博</a></li>
+                        <li><a href="#">抖音</a></li>
+                        <li><a href="#">LinkedIn</a></li>
+                    </ul>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>&copy; 2026 大型网站示例. 保留所有权利.</p>
+            </div>
+        </div>
+    </footer>
+    
+    <script>
+        // 平滑滚动
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                
+                document.querySelector(this.getAttribute('href')).scrollIntoView({
+                    behavior: 'smooth'
+                });
+            });
+        });
+        
+        // 表单提交
+        document.querySelector('.contact-form').addEventListener('submit', function(e) {
+            e.preventDefault();
+            alert('表单提交成功！我们会尽快与您联系。');
+            this.reset();
+        });
+        
+        // 产品卡片悬停效果
+        document.querySelectorAll('.product-card').forEach(card => {
+            card.addEventListener('mouseenter', function() {
+                this.style.transform = 'translateY(-10px)';
+            });
+            
+            card.addEventListener('mouseleave', function() {
+                this.style.transform = 'translateY(0)';
+            });
+        });
+        
+        // 导航栏滚动效果
+        window.addEventListener('scroll', function() {
+            const navbar = document.querySelector('.navbar');
+            if (window.scrollY > 100) {
+                navbar.style.backgroundColor = 'rgba(51, 51, 51, 0.95)';
+                navbar.style.boxShadow = '0 2px 10px rgba(0,0,0,0.1)';
+            } else {
+                navbar.style.backgroundColor = '#333';
+                navbar.style.boxShadow = 'none';
+            }
+        });
+    </script>
+</body>
+</html>
+
+<script src=".seeweb/choseList.js"></script>
+<script src=".seeweb/choseDiv.js"></script>
+<script src=".seeweb/choseRect.js"></script>
+<script src=".seeweb/choseManager.js"></script>
+<script src=".seeweb/choseUI.js"></script>
+<link rel="stylesheet" href=".seeweb/seeweb.css">
