@@ -2,7 +2,7 @@
     font-size: 3em;
     margin-left: -30px;
     font-weight: bold;
-    color: #7775;
+    color: #7777;
     height: 0px;
     text-align: left;
     transform: translateX(0) translateY(-20px);
@@ -18,6 +18,94 @@
         transform: translateX(50px) translateY(-20px);
     }
 
+    100% {
+        color: #7777;
+        opacity: 1;
+        transform: translateX(0) translateY(-20px);
+    }
+}
+
+/* 单选模式选择框样式 */
+.seeWeb_choseDiv {
+    position: fixed;
+    border: 2px solid #3498db;
+    background-color: rgba(52, 152, 219, 0.1);
+    pointer-events: none;
+    z-index: 9999;
+    transition: all 0.2s ease;
+    display: none;
+}
+
+.seeWeb_choseDiv_name {
+    position: absolute;
+    top: -25px;
+    left: 0;
+    background-color: #3498db;
+    color: white;
+    padding: 2px 8px;
+    border-radius: 4px;
+    font-size: 12px;
+    font-family: Arial, sans-serif;
+    white-space: nowrap;
+}
+
+/* 扩选模式选择框样式 */
+.seeWeb_choseRect {
+    position: fixed;
+    border: 2px solid #2ecc71;
+    background-color: rgba(46, 204, 113, 0.2);
+    pointer-events: none;
+    z-index: 9999;
+    display: none;
+}
+
+.seeWeb_choseRectMask {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: transparent;
+    pointer-events: auto;
+    z-index: 9998;
+    display: none;
+}
+
+/* 选择标记样式 */
+.seeWeb_choseMarker {
+    position: fixed;
+    border: 2px solid #e74c3c;
+    background-color: rgba(231, 76, 60, 0.1);
+    pointer-events: none;
+    z-index: 9998;
+    top: 0;
+    left: 0;
+    width: 0;
+    height: 0;
+    border-radius: 0;
+    /* transition: all 0.2s ease; */
+}
+
+/* SeeWeb 工具样式 - 统一命名空间前缀 seeWeb_ */
+
+/* 退出提示标题动画 */
+.seeWeb_exitHint_title {
+    font-size: 3em;
+    margin-left: -30px;
+    font-weight: bold;
+    color: #7775;
+    height: 0px;
+    text-align: left;
+    transform: translateX(0) translateY(-20px);
+    animation: seeWeb_exitHintFadeIn 1s ease-in-out;
+}
+
+@keyframes seeWeb_exitHintFadeIn {
+    0% {
+        color: #fffa;
+        opacity: 0;
+        transform: translateX(50px) translateY(-20px);
+    }
     100% {
         color: #7775;
         opacity: 1;
@@ -83,50 +171,240 @@
     width: 0;
     height: 0;
     border-radius: 0;
-    transition: all 0.2s ease;
 }
 
-/* 选择模式UI样式 */
+/* ========== 选择模式UI样式 - 现代简洁设计 ========== */
+
 .seeWeb_choseUI {
     position: fixed;
     top: 20px;
     left: 20px;
-    background-color: rgba(255, 255, 255, 0.95);
-    border: 1px solid #ddd;
-    border-radius: 8px;
-    padding: 15px;
-    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    display: flex;
+    flex-direction: column;
+    background: linear-gradient(145deg, #ffffff, #f5f7fa);
+    border-radius: 12px;
+    padding: 0;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.12), 0 2px 8px rgba(0, 0, 0, 0.08);
     z-index: 10000;
-    transition: all 0.3s ease;
-    font-family: Arial, sans-serif;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+    overflow: hidden;
+    min-width: 180px;
+    /* transition: all 0.3s ease; */
+    border: 1px solid rgba(0, 0, 0, 0.06);
 }
 
-.seeWeb_choseUI h3 {
-    margin: 0 0 15px 0;
-    font-size: 16px;
-    color: #333;
-    text-align: center;
+.seeWeb_choseUI_header {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 12px 16px;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    justify-content: space-between;
 }
 
-.seeWeb_choseUIBtn {
-    display: block;
-    width: 100%;
-    padding: 10px;
-    margin-bottom: 10px;
-    border: 1px solid #ddd;
+.seeWeb_choseUI_minimizeBtn {
+    background: rgba(255, 255, 255, 0.2);
+    border: none;
+    color: white;
+    width: 24px;
+    height: 24px;
     border-radius: 4px;
-    background-color: #f5f5f5;
+    font-size: 16px;
+    font-weight: bold;
     cursor: pointer;
-    font-size: 14px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
     transition: all 0.2s ease;
 }
 
-.seeWeb_choseUIBtn:hover {
-    background-color: #e0e0e0;
+.seeWeb_choseUI_minimizeBtn:hover {
+    background: rgba(255, 255, 255, 0.3);
+    transform: scale(1.1);
 }
 
-.seeWeb_choseUIBtn:last-child {
-    margin-bottom: 0;
+.seeWeb_choseUI_minimized {
+    min-width: auto;
+    width: 48px;
+    height: 48px;
+    border-radius: 50%;
+    overflow: hidden;
+    box-shadow: 0 4px 20px rgba(102, 126, 234, 0.4), 0 2px 8px rgba(0, 0, 0, 0.15);
+    /* transition: all 0.3s ease; */
+}
+
+.seeWeb_choseUI_minimized .seeWeb_choseUI_header {
+    border-radius: 50%;
+    width: 48px;
+    height: 48px;
+    padding: 0;
+    justify-content: center;
+}
+
+.seeWeb_choseUI_minimized .seeWeb_choseUI_icon {
+    font-size: 18px;
+}
+
+.seeWeb_choseUI_minimized .seeWeb_choseUI_title {
+    display: none;
+}
+
+.seeWeb_choseUI_minimized .seeWeb_choseUI_minimizeBtn {
+    display: none;
+}
+
+.seeWeb_choseUI_minimized:hover {
+    transform: scale(1.05);
+    box-shadow: 0 6px 25px rgba(102, 126, 234, 0.5), 0 3px 10px rgba(0, 0, 0, 0.2);
+}
+
+.seeWeb_choseUI_icon {
+    font-size: 20px;
+    opacity: 0.95;
+}
+
+.seeWeb_choseUI_title {
+    font-size: 14px;
+    font-weight: 600;
+    letter-spacing: 0.5px;
+}
+
+.seeWeb_choseUI_section {
+    padding: 12px 16px;
+}
+
+.seeWeb_choseUI_section + .seeWeb_choseUI_section {
+    border-top: 1px solid rgba(0, 0, 0, 0.06);
+}
+
+.seeWeb_choseUI_label {
+    font-size: 10px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.8px;
+    color: #8898aa;
+    margin-bottom: 8px;
+}
+
+.seeWeb_choseUI_modeButtons {
+    display: flex;
+    gap: 8px;
+}
+
+.seeWeb_choseUI_actionButtons {
+    display: flex;
+    gap: 8px;
+}
+
+/* 选项卡样式 */
+.seeWeb_choseUI_tabs {
+    display: flex;
+    border-bottom: 1px solid rgba(0, 0, 0, 0.06);
+}
+
+.seeWeb_choseUI_tab {
+    flex: 1;
+    padding: 10px 16px;
+    border: none;
+    background: transparent;
+    font-size: 13px;
+    font-weight: 500;
+    color: #8898aa;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    font-family: inherit;
+}
+
+.seeWeb_choseUI_tab:hover {
+    background: rgba(102, 126, 234, 0.05);
+    color: #667eea;
+}
+
+.seeWeb_choseUI_tab_active {
+    background: rgba(102, 126, 234, 0.1);
+    color: #667eea;
+    border-bottom: 2px solid #667eea;
+}
+
+.seeWeb_choseUI_tabContent {
+    display: block;
+}
+
+/* 创建按钮容器样式 */
+.seeWeb_choseUI_createButtons {
+    display: flex;
+    gap: 8px;
+}
+
+.seeWeb_choseUIBtn {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    padding: 10px 14px;
+    border: none;
+    border-radius: 8px;
+    font-size: 13px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    font-family: inherit;
+}
+
+.seeWeb_choseUIBtn_icon {
+    font-size: 14px;
+    line-height: 1;
+}
+
+.seeWeb_choseUIBtn_primary {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    box-shadow: 0 2px 8px rgba(102, 126, 234, 0.35);
+}
+
+.seeWeb_choseUIBtn_primary:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(102, 126, 234, 0.45);
+}
+
+.seeWeb_choseUIBtn_primary:active {
+    transform: translateY(0);
+    box-shadow: 0 2px 6px rgba(102, 126, 234, 0.3);
+}
+
+.seeWeb_choseUIBtn_secondary {
+    background: #f1f3f8;
+    color: #5a6b7a;
+}
+
+.seeWeb_choseUIBtn_secondary:hover {
+    background: #e4e8f0;
+    color: #3d4a5c;
+}
+
+.seeWeb_choseUIBtn_secondary:active {
+    background: #d5dae5;
+}
+
+/* 退出提示样式 */
+.seeWeb_exitHint {
+    overflow: hidden;
+    pointer-events: none;
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    background-color: rgba(0, 0, 0, 0.7);
+    color: white;
+    padding: 8px 16px;
+    border-radius: 4px;
+    font-size: 14px;
+    font-family: Arial, sans-serif;
+    z-index: 9999;
+    display: none;
+    transition: all 0.3s ease;
+    text-align: right;
 }
 
 /* 退出提示样式 */

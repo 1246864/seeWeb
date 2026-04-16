@@ -14,32 +14,33 @@ class SeeWebInit {
             // 1. 创建选择列表实例（核心数据存储）
             const choseList = new window.ChoseList();
             
-            // 2. 创建选择模式UI实例
-            const choseUI = new window.ChoseUI({
+            // 2. 创建选择管理器实例（需要在choseUI之前创建，以便注入）
+            const choseManager = new window.ChoseManager({
                 choseList: choseList
+            });
+            
+            // 3. 创建选择模式UI实例
+            const choseUI = new window.ChoseUI({
+                choseList: choseList,
+                choseManager: choseManager
                 // choseDiv 和 choseRect 将在后面注入
             });
             
-            // 3. 创建单选模式选择器实例
+            // 4. 创建单选模式选择器实例
             const choseDiv = new window.ChoseDiv({
                 choseList: choseList,
                 choseUI: choseUI
             });
             
-            // 4. 创建扩选模式选择器实例
+            // 5. 创建扩选模式选择器实例
             const choseRect = new window.ChoseRect({
                 choseList: choseList,
                 choseUI: choseUI
             });
             
-            // 5. 注入依赖到 choseUI
+            // 6. 注入依赖到 choseUI
             choseUI.choseDiv = choseDiv;
             choseUI.choseRect = choseRect;
-            
-            // 6. 创建选择管理器实例
-            const choseManager = new window.ChoseManager({
-                choseList: choseList
-            });
             
             // 7. 导出所有实例
             const instances = {

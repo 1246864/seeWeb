@@ -151,6 +151,24 @@ class ChoseManager {
             this.updateMarkerBoxPosition(element, markerBox);
         });
     }
+    
+    /**
+     * 隐藏所有标记框
+     */
+    hideAllMarkers() {
+        this.elementBoxMap.forEach((markerBox) => {
+            markerBox.style.display = 'none';
+        });
+    }
+    
+    /**
+     * 显示所有标记框
+     */
+    showAllMarkers() {
+        this.elementBoxMap.forEach((markerBox) => {
+            markerBox.style.display = 'block';
+        });
+    }
 }
 
 // 导出类（不直接创建实例，由外部负责依赖注入）

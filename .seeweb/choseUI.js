@@ -11,118 +11,249 @@ class ChoseUI {
      * @param {Object} options.choseDiv - 单选模式选择器实例
      * @param {Object} options.choseRect - 扩选模式选择器实例
      * @param {Object} options.choseList - 选择列表实例（用于撤回操作）
+     * @param {Object} options.choseManager - 选择管理器实例（用于控制标记框显示/隐藏）
      */
     constructor(options = {}) {
-        // 依赖注入，确保模块松耦合
         this.choseDiv = options.choseDiv;
         this.choseRect = options.choseRect;
         this.choseList = options.choseList;
+        this.choseManager = options.choseManager;
         
-        // 验证必要依赖
+        // 拖动状态标志
+        this._isDragging = false;
+        this._justFinishedDragging = false;
+        
         if (!this.choseDiv || !this.choseRect) {
             console.warn('ChoseUI: Missing required dependencies (choseDiv or choseRect)');
         }
         
-        // 创建UI容器
-        this.container = document.createElement('div');
-        this.container.className = 'seeWeb_choseUI';
-        
-        // 创建标题
-        this.title = document.createElement('h3');
-        this.title.textContent = '选择模式';
-        
-        // 创建单选模式按钮
-        this.singleSelectBtn = document.createElement('button');
-        this.singleSelectBtn.className = 'seeWeb_choseUIBtn';
-        this.singleSelectBtn.textContent = '单选模式';
-        
-        // 创建扩选模式按钮
-        this.rectSelectBtn = document.createElement('button');
-        this.rectSelectBtn.className = 'seeWeb_choseUIBtn';
-        this.rectSelectBtn.textContent = '扩选模式';
-        
-        // 创建撤回按钮
-        this.undoBtn = document.createElement('button');
-        this.undoBtn.className = 'seeWeb_choseUIBtn';
-        this.undoBtn.textContent = '撤回';
-        
-        // 组装UI
-        this.container.appendChild(this.title);
-        this.container.appendChild(this.singleSelectBtn);
-        this.container.appendChild(this.rectSelectBtn);
-        this.container.appendChild(this.undoBtn);
-        
-        // 添加到页面
-        document.body.appendChild(this.container);
-        
-        // 初始化变量
         this.isVisible = true;
         
-        // 添加CSS样式
-        this._addStyles();
-        
-        // 绑定事件
+        this._createUI();
         this._bindEvents();
     }
     
-    // 添加CSS样式 - 样式已统一到seeweb.css文件中
-    _addStyles() {
-        // 样式已统一到seeweb.css文件中，此处不再重复添加
+    _createUI() {
+        this.container = document.createElement('div');
+        this.container.className = 'seeWeb_choseUI';
+        
+        const header = document.createElement('div');
+        header.className = 'seeWeb_choseUI_header';
+        header.style.cursor = 'move';
+        
+        const icon = document.createElement('span');
+        icon.className = 'seeWeb_choseUI_icon';
+        icon.innerHTML = '⊡';
+        
+        const title = document.createElement('span');
+        title.className = 'seeWeb_choseUI_title';
+        title.textContent = 'SeeWeb';
+        
+        this.minimizeBtn = document.createElement('button');
+        this.minimizeBtn.className = 'seeWeb_choseUI_minimizeBtn';
+        this.minimizeBtn.innerHTML = '−';
+        
+        header.appendChild(icon);
+        header.appendChild(title);
+        header.appendChild(this.minimizeBtn);
+        
+        // 添加选项卡
+        const tabs = document.createElement('div');
+        tabs.className = 'seeWeb_choseUI_tabs';
+        
+        this.createTab = document.createElement('button');
+        this.createTab.className = 'seeWeb_choseUI_tab seeWeb_choseUI_tab_active';
+        this.createTab.textContent = '创建';
+        
+        this.selectTab = document.createElement('button');
+        this.selectTab.className = 'seeWeb_choseUI_tab';
+        this.selectTab.textContent = '选择';
+        
+        tabs.appendChild(this.createTab);
+        tabs.appendChild(this.selectTab);
+        
+        // 创建选项卡内容
+        this.createContent = document.createElement('div');
+        this.createContent.className = 'seeWeb_choseUI_tabContent';
+        
+        const createSection = document.createElement('div');
+        createSection.className = 'seeWeb_choseUI_section';
+        
+        const createLabel = document.createElement('div');
+        createLabel.className = 'seeWeb_choseUI_label';
+        createLabel.textContent = '创建元素';
+        createSection.appendChild(createLabel);
+        
+        const createButtons = document.createElement('div');
+        createButtons.className = 'seeWeb_choseUI_createButtons';
+        
+        this.createBtn = document.createElement('button');
+        this.createBtn.className = 'seeWeb_choseUIBtn seeWeb_choseUIBtn_primary';
+        this.createBtn.innerHTML = '<span class="seeWeb_choseUIBtn_icon">+</span><span>创建</span>';
+        
+        createButtons.appendChild(this.createBtn);
+        createSection.appendChild(createButtons);
+        
+        this.createContent.appendChild(createSection);
+        
+        this.selectContent = document.createElement('div');
+        this.selectContent.className = 'seeWeb_choseUI_tabContent';
+        this.selectContent.style.display = 'none';
+        
+        const modeSection = document.createElement('div');
+        modeSection.className = 'seeWeb_choseUI_section';
+        
+        const modeLabel = document.createElement('div');
+        modeLabel.className = 'seeWeb_choseUI_label';
+        modeLabel.textContent = '选择模式';
+        modeSection.appendChild(modeLabel);
+        
+        const modeButtons = document.createElement('div');
+        modeButtons.className = 'seeWeb_choseUI_modeButtons';
+        
+        this.singleSelectBtn = document.createElement('button');
+        this.singleSelectBtn.className = 'seeWeb_choseUIBtn seeWeb_choseUIBtn_primary';
+        this.singleSelectBtn.innerHTML = '<span class="seeWeb_choseUIBtn_icon">◉</span><span>单选</span>';
+        
+        this.rectSelectBtn = document.createElement('button');
+        this.rectSelectBtn.className = 'seeWeb_choseUIBtn seeWeb_choseUIBtn_primary';
+        this.rectSelectBtn.innerHTML = '<span class="seeWeb_choseUIBtn_icon">▢</span><span>扩选</span>';
+        
+        modeButtons.appendChild(this.singleSelectBtn);
+        modeButtons.appendChild(this.rectSelectBtn);
+        modeSection.appendChild(modeButtons);
+        
+        const actionSection = document.createElement('div');
+        actionSection.className = 'seeWeb_choseUI_section';
+        
+        const actionLabel = document.createElement('div');
+        actionLabel.className = 'seeWeb_choseUI_label';
+        actionLabel.textContent = '操作';
+        actionSection.appendChild(actionLabel);
+        
+        const actionButtons = document.createElement('div');
+        actionButtons.className = 'seeWeb_choseUI_actionButtons';
+        
+        this.undoBtn = document.createElement('button');
+        this.undoBtn.className = 'seeWeb_choseUIBtn seeWeb_choseUIBtn_secondary';
+        this.undoBtn.innerHTML = '<span class="seeWeb_choseUIBtn_icon">↩</span><span>撤销</span>';
+        
+        this.clearBtn = document.createElement('button');
+        this.clearBtn.className = 'seeWeb_choseUIBtn seeWeb_choseUIBtn_secondary';
+        this.clearBtn.innerHTML = '<span class="seeWeb_choseUIBtn_icon">✕</span><span>清除</span>';
+        
+        actionButtons.appendChild(this.undoBtn);
+        actionButtons.appendChild(this.clearBtn);
+        actionSection.appendChild(actionButtons);
+        
+        this.selectContent.appendChild(modeSection);
+        this.selectContent.appendChild(actionSection);
+        
+        this.container.appendChild(header);
+        this.container.appendChild(tabs);
+        this.container.appendChild(this.createContent);
+        this.container.appendChild(this.selectContent);
+        
+        document.body.appendChild(this.container);
     }
     
-    // 绑定事件
     _bindEvents() {
-        // 单选模式按钮点击事件
-        this.singleSelectBtn.addEventListener('click', () => {
-            // 隐藏UI
-            this.hide();
+        // 选项卡切换事件
+        this.createTab.addEventListener('click', () => {
+            // 激活创建选项卡
+            this.createTab.classList.add('seeWeb_choseUI_tab_active');
+            this.selectTab.classList.remove('seeWeb_choseUI_tab_active');
             
-            // 禁用扩选模式
+            // 显示创建内容，隐藏选择内容
+            this.createContent.style.display = 'block';
+            this.selectContent.style.display = 'none';
+            
+            // 隐藏所有选中元素的标记框
+            if (this.choseManager && typeof this.choseManager.hideAllMarkers === 'function') {
+                this.choseManager.hideAllMarkers();
+            }
+        });
+        
+        this.selectTab.addEventListener('click', () => {
+            // 激活选择选项卡
+            this.selectTab.classList.add('seeWeb_choseUI_tab_active');
+            this.createTab.classList.remove('seeWeb_choseUI_tab_active');
+            
+            // 显示选择内容，隐藏创建内容
+            this.selectContent.style.display = 'block';
+            this.createContent.style.display = 'none';
+            
+            // 显示所有选中元素的标记框
+            if (this.choseManager && typeof this.choseManager.showAllMarkers === 'function') {
+                this.choseManager.showAllMarkers();
+            }
+        });
+        
+        // 创建按钮点击事件（空实现，待后续扩展）
+        this.createBtn.addEventListener('click', () => {
+            // 后续实现创建元素的逻辑
+            console.log('创建按钮点击，待实现创建逻辑');
+        });
+        
+        this.singleSelectBtn.addEventListener('click', () => {
+            this.hide();
             if (this.choseRect) {
                 this.choseRect.disable();
             }
-            
-            // 启用单选模式
             if (this.choseDiv) {
                 this.choseDiv.enable();
             }
         });
         
-        // 扩选模式按钮点击事件
         this.rectSelectBtn.addEventListener('click', () => {
-            // 隐藏UI
             this.hide();
-            
-            // 禁用单选模式
             if (this.choseDiv) {
                 this.choseDiv.disable();
             }
-            
-            // 启用扩选模式
             if (this.choseRect) {
                 this.choseRect.enable();
             }
         });
         
-        // 撤回按钮点击事件
         this.undoBtn.addEventListener('click', () => {
-            // 调用撤回功能
-            if (this.choseList) {
+            if (this.choseList && typeof this.choseList.undo === 'function') {
                 this.choseList.undo();
-            } else if (this.choseDiv) {
+            } else if (this.choseDiv && typeof this.choseDiv.undo === 'function') {
                 this.choseDiv.undo();
-            } else if (this.choseRect) {
+            } else if (this.choseRect && typeof this.choseRect.undo === 'function') {
                 this.choseRect.undo();
             }
         });
         
-        // 监听ESC键，显示UI
+        this.clearBtn.addEventListener('click', () => {
+            if (this.choseList && typeof this.choseList.clear === 'function') {
+                this.choseList.clear();
+            }
+        });
+        
+        // 最小化按钮点击事件
+        this.minimizeBtn.addEventListener('click', (e) => {
+            e.stopPropagation(); // 阻止事件冒泡
+            this._toggleMinimize();
+        });
+        
+        // 点击最小化圆片恢复UI
+        this.container.addEventListener('click', (e) => {
+            // 如果正在拖动或刚刚完成拖动，忽略点击事件
+            if (this._isDragging || this._justFinishedDragging) {
+                return;
+            }
+            if (this.container.classList.contains('seeWeb_choseUI_minimized')) {
+                this._toggleMinimize();
+            }
+        });
+        
+        // 拖动功能
+        this._initDrag();
+        
         document.addEventListener('keydown', (e) => {
             if (e.key === 'Escape') {
-                // 显示UI
                 this.show();
-                
-                // 禁用所有选择模式
                 if (this.choseDiv) {
                     this.choseDiv.disable();
                 }
@@ -133,19 +264,157 @@ class ChoseUI {
         });
     }
     
-    // 显示UI
+    _initDrag() {
+        let startX = 0;
+        let startY = 0;
+        let startLeft = 0;
+        let startTop = 0;
+        let hasMoved = false;
+        
+        const header = this.container.querySelector('.seeWeb_choseUI_header');
+        
+        header.addEventListener('mousedown', (e) => {
+            this._isDragging = true;
+            hasMoved = false;
+            startX = e.clientX;
+            startY = e.clientY;
+            
+            const rect = this.container.getBoundingClientRect();
+            startLeft = rect.left;
+            startTop = rect.top;
+            
+            document.body.style.userSelect = 'none';
+        });
+        
+        document.addEventListener('mousemove', (e) => {
+            if (!this._isDragging) return;
+            
+            const deltaX = e.clientX - startX;
+            const deltaY = e.clientY - startY;
+            
+            // 如果移动距离超过阈值，才认为是拖动
+            if (Math.abs(deltaX) > 5 || Math.abs(deltaY) > 5) {
+                hasMoved = true;
+            }
+            
+            let newLeft = startLeft + deltaX;
+            let newTop = startTop + deltaY;
+            
+            // 边界检测，确保不会拖到屏幕外
+            const containerWidth = this.container.offsetWidth;
+            const containerHeight = this.container.offsetHeight;
+            const windowWidth = window.innerWidth;
+            const windowHeight = window.innerHeight;
+            
+            // 限制左边界
+            if (newLeft < 0) {
+                newLeft = 0;
+            }
+            // 限制右边界
+            if (newLeft + containerWidth > windowWidth) {
+                newLeft = windowWidth - containerWidth;
+            }
+            // 限制上边界
+            if (newTop < 0) {
+                newTop = 0;
+            }
+            // 限制下边界
+            if (newTop + containerHeight > windowHeight) {
+                newTop = windowHeight - containerHeight;
+            }
+            
+            this.container.style.left = `${newLeft}px`;
+            this.container.style.top = `${newTop}px`;
+        });
+        
+        document.addEventListener('mouseup', () => {
+            if (this._isDragging) {
+                this._isDragging = false;
+                // 如果有移动，设置刚刚完成拖动的标志
+                if (hasMoved) {
+                    this._justFinishedDragging = true;
+                    // 短暂延迟后重置标志，确保点击事件被忽略
+                    setTimeout(() => {
+                        this._justFinishedDragging = false;
+                    }, 100);
+                }
+                document.body.style.userSelect = '';
+                
+                // 如果是最小化状态且没有移动过（点击），恢复UI
+                if (!hasMoved && this.container.classList.contains('seeWeb_choseUI_minimized')) {
+                    this._toggleMinimize();
+                }
+            }
+        });
+    }
+    
+    _toggleMinimize() {
+        const sections = this.container.querySelectorAll('.seeWeb_choseUI_section');
+        const tabs = this.container.querySelector('.seeWeb_choseUI_tabs');
+        const isMinimized = this.container.classList.contains('seeWeb_choseUI_minimized');
+        
+        if (isMinimized) {
+            // 恢复正常状态，直接使用圆片当前位置
+            this.container.classList.remove('seeWeb_choseUI_minimized');
+            
+            // 边界检测，确保恢复后不会超出屏幕
+            let newLeft = this.container.offsetLeft;
+            let newTop = this.container.offsetTop;
+            const containerWidth = this.container.offsetWidth;
+            const containerHeight = this.container.offsetHeight;
+            const windowWidth = window.innerWidth;
+            const windowHeight = window.innerHeight;
+            
+            if (newLeft + containerWidth > windowWidth) {
+                newLeft = windowWidth - containerWidth;
+            }
+            if (newTop + containerHeight > windowHeight) {
+                newTop = windowHeight - containerHeight;
+            }
+            if (newLeft < 0) newLeft = 0;
+            if (newTop < 0) newTop = 0;
+            
+            this.container.style.left = `${newLeft}px`;
+            this.container.style.top = `${newTop}px`;
+            
+            sections.forEach(section => {
+                section.style.display = 'block';
+            });
+            if (tabs) {
+                tabs.style.display = 'flex';
+            }
+            this.minimizeBtn.innerHTML = '−';
+        } else {
+            // 保存当前位置
+            this.previousPosition = {
+                left: this.container.style.left,
+                top: this.container.style.top
+            };
+            
+            // 最小化 - 变成小圆片并回到左上角
+            this.container.classList.add('seeWeb_choseUI_minimized');
+            this.container.style.left = '10px';
+            this.container.style.top = '10px';
+            sections.forEach(section => {
+                section.style.display = 'none';
+            });
+            if (tabs) {
+                tabs.style.display = 'none';
+            }
+            this.minimizeBtn.innerHTML = '+';
+        }
+    }
+    
     show() {
-        this.container.style.display = 'block';
+        this.container.style.display = 'flex';
         this.isVisible = true;
     }
     
-    // 隐藏UI
     hide() {
         this.container.style.display = 'none';
         this.isVisible = false;
     }
     
-    // 切换UI可见性
     toggle() {
         if (this.isVisible) {
             this.hide();
@@ -155,19 +424,14 @@ class ChoseUI {
     }
 }
 
-// 导出类（不直接创建实例，由外部负责依赖注入）
-
-// 如果你需要使用CommonJS模块导出
 if (typeof module !== 'undefined' && module.exports) {
     module.exports = ChoseUI;
 }
 
-// 如果你需要使用ES模块导出
 if (typeof exports !== 'undefined' && !exports.default) {
     exports.default = ChoseUI;
 }
 
-// 全局导出
 if (typeof window !== 'undefined') {
     window.ChoseUI = ChoseUI;
 }
