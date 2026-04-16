@@ -42,3 +42,7 @@ ehthumbs.db
 
 # Project specific exclusions
 ai-agent/
+
+# Documentation files
+.seeweb/DEVELOPMENT_DOCUMENT.md
+.seeweb/MODIFICATION_REPORT.md
