@@ -18,7 +18,7 @@ if (typeof window !== 'undefined' && !window.ChoseRect) {
             // 创建退出提示元素
             this.exitHint = document.createElement('div')
             this.exitHint.className = 'exitHint'
-            this.exitHint.innerHTML = '按 ESC 退出扩选模式<br>按鼠标拖动进行扩选'
+            this.exitHint.innerHTML = '<div class="seeWeb_exitHint_title">扩选模式</div>按 ESC 或 [鼠标右键] 退出扩选模式<br>按鼠标拖动进行扩选'
             
             // 添加到页面
             document.body.appendChild(this.selectionRect)
@@ -151,6 +151,18 @@ if (typeof window !== 'undefined' && !window.ChoseRect) {
                     this.disable()
                 }
             })
+            
+            // 鼠标右键点击退出选择器
+            document.addEventListener('contextmenu', (e) => {
+                if (this.isActive) {
+                    e.preventDefault() // 阻止默认的右键菜单
+                    this.disable()
+                    // 显示选择模式UI
+                    if (typeof choseUI !== 'undefined' && choseUI.show) {
+                        choseUI.show()
+                    }
+                }
+            })
         }
 
         // 选择矩形内的所有元素
@@ -229,6 +241,13 @@ if (typeof window !== 'undefined' && !window.ChoseRect) {
             this.selectionRect.style.display = 'none'
             this.mask.style.display = 'none'
             this.exitHint.style.display = 'none'
+        }
+        
+        // 撤回功能
+        undo() {
+            if (typeof choseList !== 'undefined' && choseList.undo) {
+                choseList.undo()
+            }
         }
     }
 

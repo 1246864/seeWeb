@@ -27,10 +27,16 @@ class ChoseUI {
         this.rectSelectBtn.className = 'choseUIBtn'
         this.rectSelectBtn.textContent = '扩选模式'
         
+        // 创建撤回按钮
+        this.undoBtn = document.createElement('button')
+        this.undoBtn.className = 'choseUIBtn'
+        this.undoBtn.textContent = '撤回'
+        
         // 组装UI
         this.container.appendChild(this.title)
         this.container.appendChild(this.singleSelectBtn)
         this.container.appendChild(this.rectSelectBtn)
+        this.container.appendChild(this.undoBtn)
         
         // 添加到页面
         document.body.appendChild(this.container)
@@ -125,6 +131,17 @@ class ChoseUI {
             // 启用扩选模式
             if (this.choseRect) {
                 this.choseRect.enable()
+            }
+        })
+        
+        // 撤回按钮点击事件
+        this.undoBtn.addEventListener('click', () => {
+            // 调用撤回功能
+            if (this.choseDiv) {
+                this.choseDiv.undo()
+            }
+            if (this.choseRect) {
+                this.choseRect.undo()
             }
         })
         

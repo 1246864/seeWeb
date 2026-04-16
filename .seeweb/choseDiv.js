@@ -21,7 +21,7 @@ class ChoseDiv {
         // 创建退出提示元素
         this.exitHint = document.createElement('div')
         this.exitHint.className = 'exitHint'
-        this.exitHint.innerHTML = '按 ESC 退出选择模式<br>按 Ctrl 可以扩大选区'
+        this.exitHint.innerHTML = '<div class="seeWeb_exitHint_title">单选模式</div>按 ESC 或 [鼠标右键] 退出单选模式<br>按 Ctrl 可以扩大选区'
         document.body.appendChild(this.exitHint)
 
         // 初始化变量
@@ -32,17 +32,17 @@ class ChoseDiv {
         this.lastMouseX = 0
         this.lastMouseY = 0
         this.MOUSE_MOVE_THRESHOLD = 10
-        
+
         // 添加CSS样式
         this._addStyles()
-        
+
         // 绑定事件
         this._bindEvents()
-        
+
         // 启动定时器
         this._startTimer()
     }
-    
+
     // 添加CSS样式
     _addStyles() {
         const style = document.createElement('style')
@@ -71,6 +71,7 @@ class ChoseDiv {
             }
             
             .exitHint {
+                overflow: hidden;
                 pointer-events: none;
                 position: fixed;
                 top: 20px;
@@ -86,15 +87,16 @@ class ChoseDiv {
                 transition: all 0.3s ease;
                 text-align: right;
             }
+            
         `
         document.head.appendChild(style)
     }
-    
+
     // 检查鼠标是否靠近右上角
     _checkCornerDistance(x, y) {
         const windowWidth = window.innerWidth
         const cornerDistance = this._calculateDistance(x, y, windowWidth - 20, 20)
-        
+
         // 如果鼠标靠近右上角，隐藏提示框
         if (cornerDistance < 300) {
             this.exitHint.style.display = 'none'
@@ -110,7 +112,7 @@ class ChoseDiv {
         // 鼠标移动事件
         document.addEventListener('mousemove', (e) => {
             if (!this.isSelectionActive) return;
-            
+
             // 计算鼠标移动距离
             const distance = this._calculateDistance(this.lastMouseX, this.lastMouseY, e.clientX, e.clientY)
 
@@ -130,7 +132,7 @@ class ChoseDiv {
         // 按Ctrl键切换元素
         document.addEventListener('keydown', (e) => {
             if (!this.isSelectionActive) return;
-            
+
             if (e.key === 'Control' && this.hoveredElementsCache.length > 0) {
                 this.currentIndex = (this.currentIndex + 1) % this.hoveredElementsCache.length
                 console.log('当前选中元素索引:', this.currentIndex)
@@ -143,7 +145,7 @@ class ChoseDiv {
         // 点击选择框时获取当前元素
         this.selectionBox.addEventListener('click', () => {
             if (!this.isSelectionActive) return;
-            
+
             console.log('点击选择框')
             const selectedElement = this.hoveredElementsCache[this.currentIndex]
             console.log(selectedElement)
@@ -163,14 +165,26 @@ class ChoseDiv {
                 choseList.undo()
             }
         })
+
+        // 鼠标右键点击退出选择器
+        document.addEventListener('contextmenu', (e) => {
+            if (this.isSelectionActive) {
+                e.preventDefault() // 阻止默认的右键菜单
+                this.disable()
+                // 显示选择模式UI
+                if (typeof choseUI !== 'undefined' && choseUI.show) {
+                    choseUI.show()
+                }
+            }
+        })
     }
-    
+
     // 为所有元素添加悬停事件
     _addHoverEvents() {
         document.querySelectorAll('body *:not(.choseDiv)').forEach(element => {
             element.addEventListener('mouseover', () => {
                 if (!this.isSelectionActive) return;
-                
+
                 if (!this.hoveredElements.includes(element)) {
                     this.hoveredElements.push(element)
                 }
@@ -178,7 +192,7 @@ class ChoseDiv {
 
             element.addEventListener('mouseout', () => {
                 if (!this.isSelectionActive) return;
-                
+
                 const index = this.hoveredElements.indexOf(element)
                 if (index > -1) {
                     this.hoveredElements.splice(index, 1)
@@ -189,12 +203,12 @@ class ChoseDiv {
             })
         })
     }
-    
+
     // 启动定时器
     _startTimer() {
         setInterval(() => {
             if (!this.isSelectionActive) return;
-            
+
             // 同步悬停元素列表到缓存
             if (this.hoveredElements.length !== 0) {
                 this.hoveredElementsCache = [...this.hoveredElements]
@@ -225,7 +239,7 @@ class ChoseDiv {
             }
         }, 100)
     }
-    
+
     // 禁用选择框
     _disableSelection() {
         this.selectionBox.style.pointerEvents = 'none'
@@ -246,12 +260,12 @@ class ChoseDiv {
     // 启用选择器
     enable() {
         this.selectionBox.style.display = 'block'
-        
+
         // 检查鼠标是否靠近右上角
         const mouseX = this.lastMouseX || 0
         const mouseY = this.lastMouseY || 0
         this._checkCornerDistance(mouseX, mouseY)
-        
+
         this.isSelectionActive = true
     }
 
@@ -263,6 +277,13 @@ class ChoseDiv {
         this.hoveredElements = []
         this.hoveredElementsCache = []
         this.currentIndex = 0
+    }
+
+    // 撤回功能
+    undo() {
+        if (typeof choseList !== 'undefined' && choseList.undo) {
+            choseList.undo()
+        }
     }
 }
 
