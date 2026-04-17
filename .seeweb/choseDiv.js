@@ -206,7 +206,21 @@ class ChoseDiv {
                     this.selectionBox.style.height = `${height + padding * 2}px`;
                     this.selectionBox.style.borderRadius = `${padding}px`;
 
+                    // 设置标签显示的内容为当前元素的标签名（小写）
                     this.tagNameDisplay.textContent = currentElement.tagName.toLowerCase();
+                    
+                    // 获取标签显示元素的左侧位置
+                    const left = this.tagNameDisplay.getBoundingClientRect().left;
+                    
+                    // 确保标签提示不会跑到屏幕外面
+                    // 如果标签左侧超出屏幕左侧边界（小于等于-5px），则调整位置使其显示在屏幕内
+                    if (left <= -5) {
+                        this.tagNameDisplay.style.left = `${-left + 15}px`;
+                    } 
+                    // 如果标签左侧距离屏幕左侧过远（大于等于20px），则重置位置
+                    else if (left >= 20) {
+                        this.tagNameDisplay.style.left = '0px';
+                    }
                 }
             }
         }, 100);
