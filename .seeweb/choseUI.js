@@ -43,7 +43,7 @@ class ChoseUI {
         
         const icon = document.createElement('span');
         icon.className = 'seeWeb_choseUI_icon';
-        icon.innerHTML = '⊡';
+        icon.innerHTML = '◈';
         
         const title = document.createElement('span');
         title.className = 'seeWeb_choseUI_title';
@@ -89,7 +89,7 @@ class ChoseUI {
         
         this.createBtn = document.createElement('button');
         this.createBtn.className = 'seeWeb_choseUIBtn seeWeb_choseUIBtn_primary';
-        this.createBtn.innerHTML = '<span class="seeWeb_choseUIBtn_icon">+</span><span>创建</span>';
+        this.createBtn.innerHTML = '<span class="seeWeb_choseUIBtn_icon">＋</span><span>创建</span>';
         
         createButtons.appendChild(this.createBtn);
         createSection.appendChild(createButtons);
@@ -136,7 +136,7 @@ class ChoseUI {
         
         this.undoBtn = document.createElement('button');
         this.undoBtn.className = 'seeWeb_choseUIBtn seeWeb_choseUIBtn_secondary';
-        this.undoBtn.innerHTML = '<span class="seeWeb_choseUIBtn_icon">↩</span><span>撤销</span>';
+        this.undoBtn.innerHTML = '<span class="seeWeb_choseUIBtn_icon">↺</span><span>撤销</span>';
         
         this.clearBtn = document.createElement('button');
         this.clearBtn.className = 'seeWeb_choseUIBtn seeWeb_choseUIBtn_secondary';
