@@ -11,23 +11,25 @@ class ChoseDiv {
      * @param {Object} options - 配置选项
      * @param {Object} options.choseList - 选择列表实例
      * @param {Object} options.choseUI - 选择模式UI实例
+     * @param {Object} options.proxyFactory - 代理工厂实例
      */
     constructor(options = {}) {
         // 依赖注入，确保模块松耦合
         this.choseList = options.choseList;
         this.choseUI = options.choseUI;
-        
+        this.proxyFactory = options.proxyFactory;
+
         // 验证必要依赖
         if (!this.choseList) {
             console.warn('ChoseDiv: Missing required dependency (choseList)');
         }
-        
+
         // 创建选择框元素
-        this.selectionBox = document.createElement('div');
+        this.selectionBox = this._createElement('div', 'choseDiv-selectionBox');
         this.selectionBox.className = 'seeWeb_choseDiv';
 
         // 创建标签名显示元素
-        this.tagNameDisplay = document.createElement('div');
+        this.tagNameDisplay = this._createElement('div', 'choseDiv-tagNameDisplay');
         this.tagNameDisplay.className = 'seeWeb_choseDiv_name';
 
         // 添加到页面
@@ -35,7 +37,7 @@ class ChoseDiv {
         document.body.appendChild(this.selectionBox);
 
         // 创建退出提示元素
-        this.exitHint = document.createElement('div');
+        this.exitHint = this._createElement('div', 'choseDiv-exitHint');
         this.exitHint.className = 'seeWeb_exitHint';
         this.exitHint.innerHTML = '<div class="seeWeb_exitHint_title">单选模式</div>按 ESC 或 [鼠标右键] 退出单选模式<br>按 Ctrl 可以扩大选区';
         document.body.appendChild(this.exitHint);
@@ -57,6 +59,14 @@ class ChoseDiv {
 
         // 启动定时器
         this._startTimer();
+    }
+
+    // 辅助方法：使用代理工厂创建元素
+    _createElement(tag, key) {
+        if (this.proxyFactory) {
+            return this.proxyFactory.createElement(tag, key);
+        }
+        return document.createElement(tag);
     }
 
     // 添加CSS样式 - 样式已统一到seeweb.css文件中
@@ -208,15 +218,15 @@ class ChoseDiv {
 
                     // 设置标签显示的内容为当前元素的标签名（小写）
                     this.tagNameDisplay.textContent = currentElement.tagName.toLowerCase();
-                    
+
                     // 获取标签显示元素的左侧位置
                     const left = this.tagNameDisplay.getBoundingClientRect().left;
-                    
+
                     // 确保标签提示不会跑到屏幕外面
                     // 如果标签左侧超出屏幕左侧边界（小于等于-5px），则调整位置使其显示在屏幕内
                     if (left <= -5) {
                         this.tagNameDisplay.style.left = `${-left + 15}px`;
-                    } 
+                    }
                     // 如果标签左侧距离屏幕左侧过远（大于等于20px），则重置位置
                     else if (left >= 20) {
                         this.tagNameDisplay.style.left = '0px';

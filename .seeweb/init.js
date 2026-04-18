@@ -11,46 +11,53 @@ class SeeWebInit {
      */
     static init() {
         try {
+            // 0. 创建代理工厂实例（最先创建，用于管理所有动态DOM）
+            const proxyFactory = new window.ProxyFactory();
+
             // 1. 创建选择列表实例（核心数据存储）
             const choseList = new window.ChoseList();
-            
+
             // 2. 创建选择管理器实例（需要在choseUI之前创建，以便注入）
             const choseManager = new window.ChoseManager({
-                choseList: choseList
+                choseList: choseList,
+                proxyFactory: proxyFactory
             });
-            
+
             // 3. 创建选择模式UI实例
             const choseUI = new window.ChoseUI({
                 choseList: choseList,
-                choseManager: choseManager
-                // choseDiv 和 choseRect 将在后面注入
+                choseManager: choseManager,
+                proxyFactory: proxyFactory
             });
-            
+
             // 4. 创建单选模式选择器实例
             const choseDiv = new window.ChoseDiv({
                 choseList: choseList,
-                choseUI: choseUI
+                choseUI: choseUI,
+                proxyFactory: proxyFactory
             });
-            
+
             // 5. 创建扩选模式选择器实例
             const choseRect = new window.ChoseRect({
                 choseList: choseList,
-                choseUI: choseUI
+                choseUI: choseUI,
+                proxyFactory: proxyFactory
             });
-            
+
             // 6. 注入依赖到 choseUI
             choseUI.choseDiv = choseDiv;
             choseUI.choseRect = choseRect;
-            
+
             // 7. 导出所有实例
             const instances = {
                 choseList,
                 choseDiv,
                 choseRect,
                 choseUI,
-                choseManager
+                choseManager,
+                proxyFactory
             };
-            
+
             // 8. 全局导出
             if (typeof window !== 'undefined') {
                 window.seeWeb = instances;
@@ -59,9 +66,11 @@ class SeeWebInit {
                 window.choseRect = choseRect;
                 window.choseUI = choseUI;
                 window.choseManager = choseManager;
+                window.proxyFactory = proxyFactory;
             }
-            
+
             console.log('SeeWeb 初始化完成');
+            console.log('代理工厂已注册', proxyFactory.getProxyCount(), '个动态DOM元素');
             return instances;
         } catch (error) {
             console.error('SeeWeb 初始化失败:', error);

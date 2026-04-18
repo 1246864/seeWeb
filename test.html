@@ -6,14 +6,21 @@
     <title>Document</title>
 </head>
 <body>
-    <h1>1212</h1>
-    
+    <h1>SeeWeb 测试页面</h1>
+    <p>点击右上角的 SeeWeb 面板使用元素选择工具</p>
+    <p>按 <code>proxyFactory.suspendAll()</code> 可以禁用所有动态DOM</p>
+    <p>按 <code>proxyFactory.resumeAll()</code> 可以恢复所有动态DOM</p>
+    <p>按 <code>proxyFactory.toggle()</code> 可以切换状态</p>
+
     <link rel="stylesheet" href=".seeweb/seeweb.css">
     <script src=".seeweb/choseList.js"></script>
     <script src=".seeweb/choseDiv.js"></script>
     <script src=".seeweb/choseRect.js"></script>
     <script src=".seeweb/choseManager.js"></script>
     <script src=".seeweb/choseUI.js"></script>
+    <script src=".seeweb/proxy/dom-proxy.js"></script>
+    <script src=".seeweb/proxy/proxy-factory.js"></script>
+    <script src=".seeweb/proxy/index.js"></script>
     <script src=".seeweb/init.js"></script>
     <script>
         // 页面加载完成后初始化 SeeWeb
@@ -22,11 +29,26 @@
             const seeWeb = SeeWebInit.init();
             if (seeWeb) {
                 console.log('SeeWeb 初始化成功！');
+                console.log('代理工厂状态:', seeWeb.proxyFactory.isActive() ? '已激活' : '已禁用');
                 // 显示选择模式UI
                 seeWeb.choseUI.show();
             } else {
                 console.error('SeeWeb 初始化失败！');
             }
+        });
+
+        // 在控制台暴露proxyFactory方便测试
+        window.addEventListener('load', function() {
+            setTimeout(() => {
+                if (window.proxyFactory) {
+                    console.log('代理工厂已可用，可以通过 window.proxyFactory 访问');
+                    console.log('常用方法:');
+                    console.log('  - proxyFactory.suspendAll() 禁用所有动态DOM');
+                    console.log('  - proxyFactory.resumeAll() 恢复所有动态DOM');
+                    console.log('  - proxyFactory.toggle() 切换状态');
+                    console.log('  - proxyFactory.isActive() 检查状态');
+                }
+            }, 100);
         });
     </script>
 </body>
