@@ -23,42 +23,51 @@ class SeeWebInit {
                 proxyFactory: proxyFactory
             });
 
-            // 3. 创建选择模式UI实例
-            const choseUI = new window.ChoseUI({
+            // 3. 创建提示词对话框实例
+            const promptDialog = new window.PromptDialog({
                 choseList: choseList,
                 choseManager: choseManager,
                 proxyFactory: proxyFactory
             });
 
-            // 4. 创建单选模式选择器实例
+            // 4. 创建选择模式UI实例
+            const choseUI = new window.ChoseUI({
+                choseList: choseList,
+                choseManager: choseManager,
+                proxyFactory: proxyFactory,
+                promptDialog: promptDialog
+            });
+
+            // 5. 创建单选模式选择器实例
             const choseDiv = new window.ChoseDiv({
                 choseList: choseList,
                 choseUI: choseUI,
                 proxyFactory: proxyFactory
             });
 
-            // 5. 创建扩选模式选择器实例
+            // 6. 创建扩选模式选择器实例
             const choseRect = new window.ChoseRect({
                 choseList: choseList,
                 choseUI: choseUI,
                 proxyFactory: proxyFactory
             });
 
-            // 6. 注入依赖到 choseUI
+            // 7. 注入依赖到 choseUI
             choseUI.choseDiv = choseDiv;
             choseUI.choseRect = choseRect;
 
-            // 7. 导出所有实例
+            // 8. 导出所有实例
             const instances = {
                 choseList,
                 choseDiv,
                 choseRect,
                 choseUI,
                 choseManager,
-                proxyFactory
+                proxyFactory,
+                promptDialog
             };
 
-            // 8. 全局导出
+            // 9. 全局导出
             if (typeof window !== 'undefined') {
                 window.seeWeb = instances;
                 window.choseList = choseList;
@@ -67,6 +76,7 @@ class SeeWebInit {
                 window.choseUI = choseUI;
                 window.choseManager = choseManager;
                 window.proxyFactory = proxyFactory;
+                window.promptDialog = promptDialog;
             }
 
             console.log('SeeWeb 初始化完成');

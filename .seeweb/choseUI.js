@@ -13,6 +13,7 @@ class ChoseUI {
      * @param {Object} options.choseList - 选择列表实例（用于撤回操作）
      * @param {Object} options.choseManager - 选择管理器实例（用于控制标记框显示/隐藏）
      * @param {Object} options.proxyFactory - 代理工厂实例
+     * @param {Object} options.promptDialog - 提示词对话框实例
      */
     constructor(options = {}) {
         this.choseDiv = options.choseDiv;
@@ -20,6 +21,7 @@ class ChoseUI {
         this.choseList = options.choseList;
         this.choseManager = options.choseManager;
         this.proxyFactory = options.proxyFactory;
+        this.promptDialog = options.promptDialog;
 
         // 拖动状态标志
         this._isDragging = false;
@@ -35,8 +37,14 @@ class ChoseUI {
         this._bindEvents();
     }
 
+    _createElement(tag, key) {
+        if (this.proxyFactory) {
+            return this.proxyFactory.createElement(tag, key);
+        }
+        return document.createElement(tag);
+    }
+
     _createUI() {
-        // 使用代理工厂创建元素，自动注册管理
         const createEl = (tag, key) => {
             return this.proxyFactory ? this.proxyFactory.createElement(tag, key) : document.createElement(tag);
         };
@@ -64,7 +72,6 @@ class ChoseUI {
         header.appendChild(title);
         header.appendChild(this.minimizeBtn);
 
-        // 添加选项卡
         const tabs = createEl('div', 'choseUI-tabs');
         tabs.className = 'seeWeb_choseUI_tabs';
 
@@ -79,7 +86,6 @@ class ChoseUI {
         tabs.appendChild(this.createTab);
         tabs.appendChild(this.selectTab);
 
-        // 创建选项卡内容
         this.createContent = createEl('div', 'choseUI-createContent');
         this.createContent.className = 'seeWeb_choseUI_tabContent';
 
@@ -107,6 +113,7 @@ class ChoseUI {
         this.selectContent.className = 'seeWeb_choseUI_tabContent';
         this.selectContent.style.display = 'none';
 
+        // 第一行：选择模式
         const modeSection = createEl('div', 'choseUI-modeSection');
         modeSection.className = 'seeWeb_choseUI_section';
 
@@ -130,6 +137,7 @@ class ChoseUI {
         modeButtons.appendChild(this.rectSelectBtn);
         modeSection.appendChild(modeButtons);
 
+        // 第二行：操作按钮
         const actionSection = createEl('div', 'choseUI-actionSection');
         actionSection.className = 'seeWeb_choseUI_section';
 
@@ -153,8 +161,29 @@ class ChoseUI {
         actionButtons.appendChild(this.clearBtn);
         actionSection.appendChild(actionButtons);
 
+        // 第三行：提示词按钮
+        const promptSection = createEl('div', 'choseUI-promptSection');
+        promptSection.className = 'seeWeb_choseUI_section';
+
+        const promptLabel = createEl('div', 'choseUI-promptLabel');
+        promptLabel.className = 'seeWeb_choseUI_label';
+        promptLabel.textContent = '提示词';
+        promptSection.appendChild(promptLabel);
+
+        const promptButtons = createEl('div', 'choseUI-promptButtons');
+        promptButtons.className = 'seeWeb_choseUI_actionButtons';
+
+        this.promptBtn = createEl('button', 'choseUI-promptBtn');
+        this.promptBtn.className = 'seeWeb_choseUIBtn seeWeb_choseUIBtn_secondary';
+        this.promptBtn.innerHTML = '<span class="seeWeb_choseUIBtn_icon">💬</span><span>提示词</span>';
+
+        promptButtons.appendChild(this.promptBtn);
+        promptSection.appendChild(promptButtons);
+
+        // 添加到选择内容区域
         this.selectContent.appendChild(modeSection);
         this.selectContent.appendChild(actionSection);
+        this.selectContent.appendChild(promptSection);
 
         this.container.appendChild(header);
         this.container.appendChild(tabs);
@@ -165,40 +194,31 @@ class ChoseUI {
     }
 
     _bindEvents() {
-        // 选项卡切换事件
         this.createTab.addEventListener('click', () => {
-            // 激活创建选项卡
             this.createTab.classList.add('seeWeb_choseUI_tab_active');
             this.selectTab.classList.remove('seeWeb_choseUI_tab_active');
 
-            // 显示创建内容，隐藏选择内容
             this.createContent.style.display = 'block';
             this.selectContent.style.display = 'none';
 
-            // 隐藏所有选中元素的标记框
             if (this.choseManager && typeof this.choseManager.hideAllMarkers === 'function') {
                 this.choseManager.hideAllMarkers();
             }
         });
 
         this.selectTab.addEventListener('click', () => {
-            // 激活选择选项卡
             this.selectTab.classList.add('seeWeb_choseUI_tab_active');
             this.createTab.classList.remove('seeWeb_choseUI_tab_active');
 
-            // 显示选择内容，隐藏创建内容
             this.selectContent.style.display = 'block';
             this.createContent.style.display = 'none';
 
-            // 显示所有选中元素的标记框
             if (this.choseManager && typeof this.choseManager.showAllMarkers === 'function') {
                 this.choseManager.showAllMarkers();
             }
         });
 
-        // 创建按钮点击事件（空实现，待后续扩展）
         this.createBtn.addEventListener('click', () => {
-            // 后续实现创建元素的逻辑
             console.log('创建按钮点击，待实现创建逻辑');
         });
 
@@ -238,15 +258,18 @@ class ChoseUI {
             }
         });
 
-        // 最小化按钮点击事件
+        this.promptBtn.addEventListener('click', () => {
+            if (this.promptDialog) {
+                this.promptDialog.show();
+            }
+        });
+
         this.minimizeBtn.addEventListener('click', (e) => {
-            e.stopPropagation(); // 阻止事件冒泡
+            e.stopPropagation();
             this._toggleMinimize();
         });
 
-        // 点击最小化圆片恢复UI
         this.container.addEventListener('click', (e) => {
-            // 如果正在拖动或刚刚完成拖动，忽略点击事件
             if (this._isDragging || this._justFinishedDragging) {
                 return;
             }
@@ -255,7 +278,6 @@ class ChoseUI {
             }
         });
 
-        // 拖动功能
         this._initDrag();
 
         document.addEventListener('keydown', (e) => {
@@ -299,7 +321,6 @@ class ChoseUI {
             const deltaX = e.clientX - startX;
             const deltaY = e.clientY - startY;
 
-            // 如果移动距离超过阈值，才认为是拖动
             if (Math.abs(deltaX) > 5 || Math.abs(deltaY) > 5) {
                 hasMoved = true;
             }
@@ -307,25 +328,20 @@ class ChoseUI {
             let newLeft = startLeft + deltaX;
             let newTop = startTop + deltaY;
 
-            // 边界检测，确保不会拖到屏幕外
             const containerWidth = this.container.offsetWidth;
             const containerHeight = this.container.offsetHeight;
             const windowWidth = window.innerWidth;
             const windowHeight = window.innerHeight;
 
-            // 限制左边界
             if (newLeft < 0) {
                 newLeft = 0;
             }
-            // 限制右边界
             if (newLeft + containerWidth > windowWidth) {
                 newLeft = windowWidth - containerWidth;
             }
-            // 限制上边界
             if (newTop < 0) {
                 newTop = 0;
             }
-            // 限制下边界
             if (newTop + containerHeight > windowHeight) {
                 newTop = windowHeight - containerHeight;
             }
@@ -337,17 +353,14 @@ class ChoseUI {
         document.addEventListener('mouseup', () => {
             if (this._isDragging) {
                 this._isDragging = false;
-                // 如果有移动，设置刚刚完成拖动的标志
                 if (hasMoved) {
                     this._justFinishedDragging = true;
-                    // 短暂延迟后重置标志，确保点击事件被忽略
                     setTimeout(() => {
                         this._justFinishedDragging = false;
                     }, 100);
                 }
                 document.body.style.userSelect = '';
 
-                // 如果是最小化状态且没有移动过（点击），恢复UI
                 if (!hasMoved && this.container.classList.contains('seeWeb_choseUI_minimized')) {
                     this._toggleMinimize();
                 }
@@ -361,10 +374,8 @@ class ChoseUI {
         const isMinimized = this.container.classList.contains('seeWeb_choseUI_minimized');
 
         if (isMinimized) {
-            // 恢复正常状态，直接使用圆片当前位置
             this.container.classList.remove('seeWeb_choseUI_minimized');
 
-            // 边界检测，确保恢复后不会超出屏幕
             let newLeft = this.container.offsetLeft;
             let newTop = this.container.offsetTop;
             const containerWidth = this.container.offsetWidth;
@@ -392,13 +403,11 @@ class ChoseUI {
             }
             this.minimizeBtn.innerHTML = '−';
         } else {
-            // 保存当前位置
             this.previousPosition = {
                 left: this.container.style.left,
                 top: this.container.style.top
             };
 
-            // 最小化 - 变成小圆片并回到左上角
             this.container.classList.add('seeWeb_choseUI_minimized');
             this.container.style.left = '10px';
             this.container.style.top = '10px';
@@ -415,6 +424,10 @@ class ChoseUI {
     show() {
         this.container.style.display = 'flex';
         this.isVisible = true;
+        
+        if (this.promptDialog && this.choseList && this.choseList.length > 1) {
+            this.promptDialog.show();
+        }
     }
 
     hide() {

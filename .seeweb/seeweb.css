@@ -418,6 +418,128 @@
     text-align: right;
 }
 
+/* 提示词对话框样式 */
+.seeWeb_promptDialog {
+    position: fixed;
+    background-color: white;
+    border-radius: 8px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+    width: 400px;
+    max-width: 90vw;
+    z-index: 10001;
+    display: none;
+    font-family: Arial, sans-serif;
+}
+
+.seeWeb_promptDialog_header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 15px 20px;
+    border-bottom: 1px solid #e0e0e0;
+    background-color: #f8f9fa;
+    border-radius: 8px 8px 0 0;
+}
+
+.seeWeb_promptDialog_title {
+    font-size: 16px;
+    font-weight: bold;
+    color: #333;
+}
+
+.seeWeb_promptDialog_close {
+    font-size: 24px;
+    color: #999;
+    cursor: pointer;
+    line-height: 1;
+    padding: 0 5px;
+}
+
+.seeWeb_promptDialog_close:hover {
+    color: #333;
+}
+
+.seeWeb_promptDialog_body {
+    padding: 20px;
+}
+
+.seeWeb_promptDialog_elementInfo {
+    background-color: #f0f4f8;
+    padding: 10px 15px;
+    border-radius: 4px;
+    font-size: 13px;
+    color: #555;
+    margin-bottom: 15px;
+    line-height: 1.5;
+}
+
+.seeWeb_promptDialog_textareaWrapper {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.seeWeb_promptDialog_label {
+    font-size: 14px;
+    color: #333;
+    font-weight: 500;
+}
+
+.seeWeb_promptDialog_textarea {
+    width: 100%;
+    min-height: 100px;
+    padding: 10px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    font-size: 14px;
+    font-family: Arial, sans-serif;
+    resize: vertical;
+    box-sizing: border-box;
+}
+
+.seeWeb_promptDialog_textarea:focus {
+    outline: none;
+    border-color: #4a90d9;
+    box-shadow: 0 0 0 2px rgba(74, 144, 217, 0.2);
+}
+
+.seeWeb_promptDialog_footer {
+    display: flex;
+    justify-content: flex-end;
+    gap: 10px;
+    padding: 15px 20px;
+    border-top: 1px solid #e0e0e0;
+    background-color: #f8f9fa;
+    border-radius: 0 0 8px 8px;
+}
+
+.seeWeb_promptDialog_btn {
+    padding: 8px 20px;
+    border-radius: 4px;
+    font-size: 14px;
+    cursor: pointer;
+    border: none;
+    transition: background-color 0.2s;
+}
+
+.seeWeb_promptDialog_btnCancel {
+    background-color: #e0e0e0;
+    color: #555;
+}
+
+.seeWeb_promptDialog_btnCancel:hover {
+    background-color: #d0d0d0;
+}
+
+.seeWeb_promptDialog_btnConfirm {
+    background-color: #4a90d9;
+    color: white;
+}
+
+.seeWeb_promptDialog_btnConfirm:hover {
+    background-color: #3a7bc8;
+}
+
 /* 退出提示样式 */
 .seeWeb_exitHint {
     overflow: hidden;
