@@ -12,12 +12,14 @@ class ChoseDiv {
      * @param {Object} options.choseList - 选择列表实例
      * @param {Object} options.choseUI - 选择模式UI实例
      * @param {Object} options.proxyFactory - 代理工厂实例
+     * @param {Object} options.uiManager - UI管理器实例
      */
     constructor(options = {}) {
         // 依赖注入，确保模块松耦合
         this.choseList = options.choseList;
         this.choseUI = options.choseUI;
         this.proxyFactory = options.proxyFactory;
+        this.uiManager = options.uiManager;
 
         // 验证必要依赖
         if (!this.choseList) {
@@ -255,6 +257,11 @@ class ChoseDiv {
 
     // 启用选择器
     enable() {
+        // 隐藏所有其他 UI 窗口
+        if (this.uiManager && typeof this.uiManager.hideAll === 'function') {
+            this.uiManager.hideAll();
+        }
+
         this.selectionBox.style.display = 'block';
 
         // 检查鼠标是否靠近右上角
@@ -273,6 +280,11 @@ class ChoseDiv {
         this.hoveredElements = [];
         this.hoveredElementsCache = [];
         this.currentIndex = 0;
+        
+        // 恢复显示所有 UI
+        if (this.uiManager && typeof this.uiManager.showAll === 'function') {
+            this.uiManager.showAll();
+        }
     }
 
     // 撤回功能

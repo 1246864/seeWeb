@@ -18,9 +18,11 @@
     <script src=".seeweb/choseRect.js"></script>
     <script src=".seeweb/choseManager.js"></script>
     <script src=".seeweb/choseUI.js"></script>
-    <script src=".seeweb/proxy/dom-proxy.js"></script>
-    <script src=".seeweb/proxy/proxy-factory.js"></script>
-    <script src=".seeweb/proxy/index.js"></script>
+    <script src=".seeweb/lib/proxy/dom-proxy.js"></script>
+    <script src=".seeweb/lib/proxy/proxy-factory.js"></script>
+    <script src=".seeweb/lib/proxy/index.js"></script>
+    <script src=".seeweb/lib/ui-manager/ui-manager.js"></script>
+    <script src=".seeweb/lib/ui-manager/index.js"></script>
     <script src=".seeweb/lib/source-extractor.js"></script>
     <script src=".seeweb/promptDialog.js"></script>
     <script src=".seeweb/init.js"></script>
@@ -56,6 +58,15 @@
                     console.log('  - SourceExtractor.extract() 提取源代码');
                     console.log('  - SourceExtractor.extractAndCopy() 提取并复制到剪贴板');
                     console.log('  - SourceExtractor.extractAndDownload() 提取并下载为文件');
+                }
+                if (window.uiManager) {
+                    console.log('\nUI 管理器已可用，可以通过 window.uiManager 访问');
+                    console.log('常用方法:');
+                    console.log('  - uiManager.hideAll() 一键隐藏所有窗口 ⭐');
+                    console.log('  - uiManager.show(\'chose-ui\') 显示选择器面板');
+                    console.log('  - uiManager.show(\'prompt-dialog\') 显示提示词窗口');
+                    console.log('  - uiManager.toggle(\'chose-ui\') 切换选择器面板');
+                    console.log('  - uiManager.getAll() 获取所有注册的窗口');
                 }
             }, 100);
         });

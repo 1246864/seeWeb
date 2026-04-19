@@ -12,11 +12,15 @@ class PromptDialog {
      * @param {Object} options.choseList - 选择列表实例
      * @param {Object} options.choseManager - 选择管理器实例
      * @param {Object} options.proxyFactory - 代理工厂实例
+     * @param {Object} options.uiManager - UI管理器实例
+     * @param {string} options.uiKey - 组件在uiManager中的key
      */
     constructor(options = {}) {
         this.choseList = options.choseList;
         this.choseManager = options.choseManager;
         this.proxyFactory = options.proxyFactory;
+        this.uiManager = options.uiManager;
+        this.uiKey = options.uiKey;
 
         this.elementPromptMap = new Map();
         this._dialog = null;
@@ -174,38 +178,36 @@ class PromptDialog {
     }
 
     show() {
-        if (!this._dialog) {
-            return;
+        if (this._dialog) {
+            this._updateElementInfo();
         }
-
-        this._updateElementInfo();
-        this._dialog.style.display = 'block';
         
-        // 居中显示
-        const windowWidth = window.innerWidth;
-        const windowHeight = window.innerHeight;
-        const dialogWidth = this._dialog.offsetWidth;
-        const dialogHeight = this._dialog.offsetHeight;
-        
-        let left = (windowWidth - dialogWidth) / 2;
-        let top = (windowHeight - dialogHeight) / 2;
-        
-        // 边界检查
-        if (left < 0) left = 0;
-        if (top < 0) top = 0;
-        if (left + dialogWidth > windowWidth) left = windowWidth - dialogWidth;
-        if (top + dialogHeight > windowHeight) top = windowHeight - dialogHeight;
-        
-        this._dialog.style.left = `${left}px`;
-        this._dialog.style.top = `${top}px`;
+        if (this.uiManager && this.uiKey) {
+            this.uiManager.show(this.uiKey);
+            
+            // 居中显示
+            const windowWidth = window.innerWidth;
+            const windowHeight = window.innerHeight;
+            const dialogWidth = this._dialog.offsetWidth;
+            const dialogHeight = this._dialog.offsetHeight;
+            
+            let left = (windowWidth - dialogWidth) / 2;
+            let top = (windowHeight - dialogHeight) / 2;
+            
+            if (left < 0) left = 0;
+            if (top < 0) top = 0;
+            if (left + dialogWidth > windowWidth) left = windowWidth - dialogWidth;
+            if (top + dialogHeight > windowHeight) top = windowHeight - dialogHeight;
+            
+            this._dialog.style.left = `${left}px`;
+            this._dialog.style.top = `${top}px`;
+        }
     }
 
     hide() {
-        if (!this._dialog) {
-            return;
+        if (this.uiManager && this.uiKey) {
+            this.uiManager.hide(this.uiKey);
         }
-
-        this._dialog.style.display = 'none';
     }
 
     _isVisible() {

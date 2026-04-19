@@ -14,6 +14,8 @@ class ChoseUI {
      * @param {Object} options.choseManager - 选择管理器实例（用于控制标记框显示/隐藏）
      * @param {Object} options.proxyFactory - 代理工厂实例
      * @param {Object} options.promptDialog - 提示词对话框实例
+     * @param {Object} options.uiManager - UI管理器实例
+     * @param {string} options.uiKey - 组件在uiManager中的key
      */
     constructor(options = {}) {
         this.choseDiv = options.choseDiv;
@@ -22,6 +24,8 @@ class ChoseUI {
         this.choseManager = options.choseManager;
         this.proxyFactory = options.proxyFactory;
         this.promptDialog = options.promptDialog;
+        this.uiManager = options.uiManager;
+        this.uiKey = options.uiKey;
 
         // 拖动状态标志
         this._isDragging = false;
@@ -422,16 +426,20 @@ class ChoseUI {
     }
 
     show() {
-        this.container.style.display = 'flex';
+        if (this.uiManager && this.uiKey) {
+            this.uiManager.show(this.uiKey);
+        }
         this.isVisible = true;
-        
+
         if (this.promptDialog && this.choseList && this.choseList.length > 1) {
             this.promptDialog.show();
         }
     }
 
     hide() {
-        this.container.style.display = 'none';
+        if (this.uiManager && this.uiKey) {
+            this.uiManager.hide(this.uiKey);
+        }
         this.isVisible = false;
     }
 
