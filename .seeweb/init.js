@@ -1,105 +1,95 @@
 /**
- * 初始化文件
- * 功能：初始化所有模块，处理依赖注入，确保模块间正确连接
- * 职责：负责创建所有实例并管理它们之间的依赖关系
+ * 初始化文件 - Pro 版本
+ * 功能：使用新的布局架构
  */
 
 class SeeWebInit {
     /**
-     * 初始化所有模块
+     * 初始化所有模块 - Pro 版本
      * @returns {Object} 包含所有实例的对象
      */
     static init() {
         try {
-            // 0. 创建 UI 管理器（最先创建，用于统一管理窗口）
-            const uiManager = new window.UIManager();
+            console.log('🎨 SeeWeb Pro 开始初始化...');
 
-            // 1. 创建代理工厂实例（用于管理所有动态DOM）
+            // 1. 代理工厂
             const proxyFactory = new window.ProxyFactory();
 
-            // 2. 创建选择列表实例（核心数据存储）
+            // 2. 布局管理器
+            const layoutManager = new window.LayoutManager({
+                proxyFactory: proxyFactory
+            });
+
+            // 3. 选择列表
             const choseList = new window.ChoseList();
 
-            // 3. 创建选择管理器实例（需要在choseUI之前创建，以便注入）
+            // 4. 选择管理器
             const choseManager = new window.ChoseManager({
                 choseList: choseList,
                 proxyFactory: proxyFactory
             });
+            
+            // 互相注入
+            layoutManager.setChoseManager(choseManager);
+            choseManager.setLayoutManager(layoutManager);
 
-            // 4. 创建提示词对话框实例
-            const promptDialog = new window.PromptDialog({
-                choseList: choseList,
-                choseManager: choseManager,
-                proxyFactory: proxyFactory,
-                uiManager: uiManager,
-                uiKey: 'prompt-dialog'
-            });
-
-            // 5. 创建选择模式UI实例
-            const choseUI = new window.ChoseUI({
-                choseList: choseList,
-                choseManager: choseManager,
-                proxyFactory: proxyFactory,
-                promptDialog: promptDialog,
-                uiManager: uiManager,
-                uiKey: 'chose-ui'
-            });
-
-            // 6. 创建单选模式选择器实例
+            // 5. 单选和扩选
             const choseDiv = new window.ChoseDiv({
                 choseList: choseList,
-                choseUI: choseUI,
                 proxyFactory: proxyFactory,
-                uiManager: uiManager
+                layoutManager: layoutManager
             });
 
-            // 7. 创建扩选模式选择器实例
             const choseRect = new window.ChoseRect({
                 choseList: choseList,
-                choseUI: choseUI,
                 proxyFactory: proxyFactory,
-                uiManager: uiManager
+                layoutManager: layoutManager
             });
 
-            // 8. 注入依赖到 choseUI
-            choseUI.choseDiv = choseDiv;
-            choseUI.choseRect = choseRect;
+            // 6. 新的选择面板
+            const chosePanel = new window.ChosePanel({
+                choseList: choseList,
+                choseManager: choseManager,
+                proxyFactory: proxyFactory,
+                choseDiv: choseDiv,
+                choseRect: choseRect,
+                layoutManager: layoutManager
+            });
 
-            // 9. 注册所有 UI 窗口到管理器
-            uiManager.register('chose-ui', choseUI);
-            uiManager.register('prompt-dialog', promptDialog);
+            // 7. 初始化布局
+            layoutManager.init();
 
-            // 10. 导出所有实例
+            // 8. 把面板加到右侧面板中
+            layoutManager.addToPanel(chosePanel.getElement(), '⚙️ 选择控制');
+
+            // 9. 全局导出
             const instances = {
+                layoutManager,
                 choseList,
+                choseManager,
                 choseDiv,
                 choseRect,
-                choseUI,
-                choseManager,
-                proxyFactory,
-                promptDialog,
-                uiManager
+                chosePanel,
+                proxyFactory
             };
 
-            // 11. 全局导出
             if (typeof window !== 'undefined') {
                 window.seeWeb = instances;
+                window.layoutManager = layoutManager;
                 window.choseList = choseList;
+                window.choseManager = choseManager;
                 window.choseDiv = choseDiv;
                 window.choseRect = choseRect;
-                window.choseUI = choseUI;
-                window.choseManager = choseManager;
+                window.chosePanel = chosePanel;
                 window.proxyFactory = proxyFactory;
-                window.promptDialog = promptDialog;
-                window.uiManager = uiManager;
             }
 
-            console.log('SeeWeb 初始化完成');
-            console.log('代理工厂已注册', proxyFactory.getProxyCount(), '个动态DOM元素');
-            console.log('UI 管理器已就绪，调用 uiManager.hideAll() 可一键隐藏所有窗口');
+            console.log('🎉 SeeWeb Pro 初始化完成！');
+            console.log('📐 布局已创建');
+
             return instances;
         } catch (error) {
-            console.error('SeeWeb 初始化失败:', error);
+            console.error('💥 SeeWeb Pro 初始化失败:', error);
             return null;
         }
     }

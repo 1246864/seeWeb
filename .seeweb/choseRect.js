@@ -9,16 +9,14 @@ class ChoseRect {
      * 构造函数
      * @param {Object} options - 配置选项
      * @param {Object} options.choseList - 选择列表实例
-     * @param {Object} options.choseUI - 选择模式UI实例
      * @param {Object} options.proxyFactory - 代理工厂实例
-     * @param {Object} options.uiManager - UI管理器实例
+     * @param {Object} options.layoutManager - 布局管理器实例
      */
     constructor(options = {}) {
         // 依赖注入，确保模块松耦合
         this.choseList = options.choseList;
-        this.choseUI = options.choseUI;
         this.proxyFactory = options.proxyFactory;
-        this.uiManager = options.uiManager;
+        this.layoutManager = options.layoutManager;
 
         // 验证必要依赖
         if (!this.choseList) {
@@ -28,20 +26,23 @@ class ChoseRect {
         // 创建选择框元素
         this.selectionRect = this._createElement('div', 'choseRect-selectionRect');
         this.selectionRect.className = 'seeWeb_choseRect';
+        this.selectionRect.style.zIndex = 9999999;
 
         // 创建全局蒙版
         this.mask = this._createElement('div', 'choseRect-mask');
         this.mask.className = 'seeWeb_choseRectMask';
+        this.mask.style.zIndex = 9999998;
 
         // 创建退出提示元素
         this.exitHint = this._createElement('div', 'choseRect-exitHint');
         this.exitHint.className = 'seeWeb_exitHint';
         this.exitHint.innerHTML = '<div class="seeWeb_exitHint_title">扩选模式</div>按 ESC 或 [鼠标右键] 退出扩选模式<br>按鼠标拖动进行扩选';
+        this.exitHint.style.zIndex = 9999999;
 
-        // 添加到页面
-        document.body.appendChild(this.selectionRect);
-        document.body.appendChild(this.mask);
-        document.body.appendChild(this.exitHint);
+        // 添加到页面（添加到 html 标签，不是 body）
+        document.documentElement.appendChild(this.selectionRect);
+        document.documentElement.appendChild(this.mask);
+        document.documentElement.appendChild(this.exitHint);
 
         // 初始化变量
         this.isDragging = false;
@@ -58,11 +59,8 @@ class ChoseRect {
         this._bindEvents();
     }
 
-    // 辅助方法：使用代理工厂创建元素
+    // 辅助方法：直接创建元素（不使用代理，避免被 suspendAll 移除）
     _createElement(tag, key) {
-        if (this.proxyFactory) {
-            return this.proxyFactory.createElement(tag, key);
-        }
         return document.createElement(tag);
     }
 
@@ -224,11 +222,11 @@ class ChoseRect {
 
     // 启用扩选功能
     enable() {
-        // 隐藏所有其他 UI 窗口
-        if (this.uiManager && typeof this.uiManager.hideAll === 'function') {
-            this.uiManager.hideAll();
+        // 进入选择模式，完全隐藏右侧面板，不显示浮动按钮
+        if (this.layoutManager && this.layoutManager.hideForSelection) {
+            this.layoutManager.hideForSelection();
         }
-
+        
         this.isActive = true;
         this.mask.style.display = 'block';
 
@@ -246,16 +244,16 @@ class ChoseRect {
 
     // 禁用扩选功能
     disable() {
+        // 退出选择模式，恢复右侧面板
+        if (this.layoutManager && this.layoutManager.restoreAfterSelection) {
+            this.layoutManager.restoreAfterSelection();
+        }
+        
         this.isActive = false;
         this.isDragging = false;
         this.selectionRect.style.display = 'none';
         this.mask.style.display = 'none';
         this.exitHint.style.display = 'none';
-        
-        // 恢复显示所有 UI
-        if (this.uiManager && typeof this.uiManager.showAll === 'function') {
-            this.uiManager.showAll();
-        }
     }
 
     // 撤回功能
