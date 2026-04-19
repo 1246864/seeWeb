@@ -21,6 +21,7 @@
     <script src=".seeweb/proxy/dom-proxy.js"></script>
     <script src=".seeweb/proxy/proxy-factory.js"></script>
     <script src=".seeweb/proxy/index.js"></script>
+    <script src=".seeweb/lib/source-extractor.js"></script>
     <script src=".seeweb/init.js"></script>
     <script>
         // 页面加载完成后初始化 SeeWeb
@@ -47,6 +48,13 @@
                     console.log('  - proxyFactory.resumeAll() 恢复所有动态DOM');
                     console.log('  - proxyFactory.toggle() 切换状态');
                     console.log('  - proxyFactory.isActive() 检查状态');
+                }
+                if (window.SourceExtractor) {
+                    console.log('\n源代码提取工具已可用，可以通过 window.SourceExtractor 访问');
+                    console.log('常用方法:');
+                    console.log('  - SourceExtractor.extract() 提取源代码');
+                    console.log('  - SourceExtractor.extractAndCopy() 提取并复制到剪贴板');
+                    console.log('  - SourceExtractor.extractAndDownload() 提取并下载为文件');
                 }
             }, 100);
         });
