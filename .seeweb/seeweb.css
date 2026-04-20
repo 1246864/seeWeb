@@ -1,32 +1,6 @@
-.seeWeb_exitHint_title {
-    font-size: 3em;
-    margin-left: -30px;
-    font-weight: bold;
-    color: #7777;
-    height: 0px;
-    text-align: left;
-    transform: translateX(0) translateY(-20px);
-
-    animation: seeWeb_exitHintFadeIn 1s ease-in-out;
-
-}
-
-@keyframes seeWeb_exitHintFadeIn {
-    0% {
-        color: #fffa;
-        opacity: 0;
-        transform: translateX(50px) translateY(-20px);
-    }
-
-    100% {
-        color: #7777;
-        opacity: 1;
-        transform: translateX(0) translateY(-20px);
-    }
-}
-
-
 /* SeeWeb 工具样式 - 统一命名空间前缀 seeWeb_ */
+
+/* ========== 核心选择功能样式（正在使用）========== */
 
 /* 退出提示标题动画 */
 .seeWeb_exitHint_title {
@@ -40,6 +14,7 @@
     animation: seeWeb_exitHintFadeIn 1s ease-in-out;
 }
 
+/* 退出提示标题淡入动画 */
 @keyframes seeWeb_exitHintFadeIn {
     0% {
         color: #fffa;
@@ -53,7 +28,7 @@
     }
 }
 
-/* 单选模式选择框样式 */
+/* 单选模式选择框样式 - 用于显示鼠标悬停元素的蓝色边框 */
 .seeWeb_choseDiv {
     position: fixed;
     border: 2px solid #3498db;
@@ -64,6 +39,7 @@
     display: none;
 }
 
+/* 单选模式标签名显示 - 显示选中元素的标签名 */
 .seeWeb_choseDiv_name {
     position: absolute;
     top: -26px;
@@ -78,7 +54,7 @@
     white-space: nowrap;
 }
 
-/* 扩选模式选择框样式 */
+/* 扩选模式选择框样式 - 用于显示拖拽选择的绿色边框 */
 .seeWeb_choseRect {
     position: fixed;
     border: 2px solid #2ecc71;
@@ -88,6 +64,7 @@
     display: none;
 }
 
+/* 扩选模式遮罩 - 用于捕获鼠标事件进行拖拽选择 */
 .seeWeb_choseRectMask {
     position: fixed;
     top: 0;
@@ -100,7 +77,7 @@
     display: none;
 }
 
-/* 选择标记样式 */
+/* 选择标记样式 - 用于显示已选中元素的红色边框 */
 .seeWeb_choseMarker {
     position: fixed;
     border: 2px solid #e74c3c;
@@ -114,447 +91,244 @@
     border-radius: 0;
 }
 
-/* ========== 选择模式UI样式 - 深色玻璃态设计 ========== */
-
-.seeWeb_choseUI {
+/* 退出提示样式 - 显示选择模式的操作提示 */
+.seeWeb_exitHint {
+    overflow: hidden;
+    pointer-events: none;
     position: fixed;
     top: 20px;
-    left: 20px;
-    display: flex;
-    flex-direction: column;
-    background: rgba(25, 25, 35, 0.6);
-    backdrop-filter: blur(15px);
-    -webkit-backdrop-filter: blur(15px);
-    border-radius: 16px;
-    padding: 0;
-    box-shadow: 
-        0 8px 32px rgba(0, 0, 0, 0.2),
-        0 0 0 1px rgba(255, 255, 255, 0.15),
-        inset 0 1px 0 rgba(255, 255, 255, 0.1);
-    z-index: 10000;
-    font-family: 'SF Pro Display', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-    overflow: hidden;
-    min-width: 220px;
-    border: 1px solid rgba(255, 255, 255, 0.15);
-}
-
-.seeWeb_choseUI_header {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    padding: 12px 16px;
-    background: rgba(35, 35, 50, 0.7);
-    backdrop-filter: blur(12px);
-    -webkit-backdrop-filter: blur(12px);
-    border-bottom: 1px solid rgba(255, 255, 255, 0.15);
-    justify-content: space-between;
-    position: relative;
-}
-
-.seeWeb_choseUI_minimizeBtn {
-    background: rgba(255, 255, 255, 0.12);
-    border: 1px solid rgba(255, 255, 255, 0.15);
-    color: rgba(255, 255, 255, 0.85);
-    width: 24px;
-    height: 24px;
-    border-radius: 6px;
-    font-size: 16px;
-    font-weight: 500;
-    cursor: pointer;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    transition: all 0.2s ease;
-}
-
-.seeWeb_choseUI_minimizeBtn:hover {
-    background: rgba(255, 255, 255, 0.2);
-    color: rgba(255, 255, 255, 1);
-    transform: scale(1.05);
-}
-
-.seeWeb_choseUI_minimized {
-    min-width: auto;
-    width: 52px;
-    height: 52px;
-    border-radius: 50%;
-    overflow: hidden;
-    box-shadow: 
-        0 4px 20px rgba(255, 255, 255, 0.2),
-        0 0 0 1px rgba(255, 255, 255, 0.15),
-        0 8px 32px rgba(0, 0, 0, 0.2);
-    background: rgba(35, 35, 50, 0.6);
-    backdrop-filter: blur(15px);
-    -webkit-backdrop-filter: blur(15px);
-    border: 1px solid rgba(255, 255, 255, 0.15);
-}
-
-.seeWeb_choseUI_minimized .seeWeb_choseUI_header {
-    border-radius: 50%;
-    width: 52px;
-    height: 52px;
-    padding: 0;
-    justify-content: center;
-    background: rgba(45, 45, 65, 0.7);
-    backdrop-filter: blur(12px);
-    -webkit-backdrop-filter: blur(12px);
-    border: none;
-}
-
-.seeWeb_choseUI_minimized .seeWeb_choseUI_icon {
-    font-size: 20px;
-}
-
-.seeWeb_choseUI_minimized .seeWeb_choseUI_title {
+    right: 20px;
+    background-color: rgba(0, 0, 0, 0.7);
+    color: white;
+    padding: 8px 16px;
+    border-radius: 4px;
+    font-size: 14px;
+    font-family: Arial, sans-serif;
+    z-index: 9999;
     display: none;
+    transition: all 0.3s ease;
+    text-align: right;
 }
 
-.seeWeb_choseUI_minimized .seeWeb_choseUI_minimizeBtn {
-    display: none;
-}
+/* ========== 布局管理器样式（正在使用）========== */
 
-.seeWeb_choseUI_minimized:hover {
-    transform: scale(1.08);
-    box-shadow: 
-        0 6px 25px rgba(255, 255, 255, 0.25),
-        0 0 0 1px rgba(255, 255, 255, 0.2),
-        0 8px 40px rgba(0, 0, 0, 0.3);
-    background: rgba(60, 60, 80, 0.9);
-}
-
-.seeWeb_choseUI_icon {
-    font-size: 22px;
-    color: rgba(255, 255, 255, 0.9);
-    filter: drop-shadow(0 2px 4px rgba(0,0,0,0.3));
-}
-
-.seeWeb_choseUI_title {
-    font-size: 15px;
-    font-weight: 600;
-    letter-spacing: 0.5px;
-    color: rgba(255, 255, 255, 0.95);
-    text-shadow: 0 1px 2px rgba(0,0,0,0.3);
-}
-
-.seeWeb_choseUI_section {
-    padding: 14px 18px;
-}
-
-.seeWeb_choseUI_section + .seeWeb_choseUI_section {
-    border-top: 1px solid rgba(255, 255, 255, 0.08);
-}
-
-.seeWeb_choseUI_label {
-    font-size: 10px;
-    font-weight: 600;
-    text-transform: uppercase;
-    letter-spacing: 1.2px;
-    color: rgba(255, 255, 255, 0.6);
-    margin-bottom: 10px;
-}
-
-.seeWeb_choseUI_modeButtons {
-    display: flex;
-    gap: 10px;
-}
-
-.seeWeb_choseUI_actionButtons {
-    display: flex;
-    gap: 10px;
-}
-
-/* 选项卡样式 */
-.seeWeb_choseUI_tabs {
-    display: flex;
-    border-bottom: 1px solid rgba(255, 255, 255, 0.15);
-    background: rgba(255, 255, 255, 0.08);
-    backdrop-filter: blur(10px);
-    -webkit-backdrop-filter: blur(10px);
-}
-
-.seeWeb_choseUI_tab {
-    flex: 1;
-    padding: 12px 16px;
-    border: none;
-    background: transparent;
-    font-size: 13px;
-    font-weight: 500;
-    color: rgba(255, 255, 255, 0.6);
-    cursor: pointer;
-    transition: all 0.25s ease;
-    font-family: inherit;
-    position: relative;
-}
-
-.seeWeb_choseUI_tab::after {
-    content: '';
-    position: absolute;
-    bottom: 0;
-    left: 50%;
-    width: 0;
-    height: 2px;
-    background: rgba(255, 255, 255, 0.5);
-    transition: all 0.25s ease;
-    transform: translateX(-50%);
-    border-radius: 2px 2px 0 0;
-}
-
-.seeWeb_choseUI_tab:hover {
-    color: rgba(255, 255, 255, 0.85);
-    background: rgba(255, 255, 255, 0.05);
-}
-
-.seeWeb_choseUI_tab_active {
-    color: rgba(255, 255, 255, 0.95);
-    background: rgba(255, 255, 255, 0.08);
-}
-
-.seeWeb_choseUI_tab_active::after {
-    width: 60%;
-}
-
-.seeWeb_choseUI_tabContent {
-    display: block;
-}
-
-/* 创建按钮容器样式 */
-.seeWeb_choseUI_createButtons {
-    display: flex;
-    gap: 10px;
-}
-
-.seeWeb_choseUIBtn {
-    flex: 1;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 7px;
-    padding: 11px 16px;
-    border: none;
-    border-radius: 10px;
-    font-size: 13px;
-    font-weight: 500;
-    cursor: pointer;
-    transition: all 0.2s ease;
-    font-family: inherit;
-    position: relative;
-    overflow: hidden;
-}
-
-.seeWeb_choseUIBtn::before {
-    content: '';
-    position: absolute;
+/* 布局包装器 - 整体布局容器 */
+.seeweb-layout {
+    position: fixed;
     top: 0;
     left: 0;
     right: 0;
     bottom: 0;
-    background: linear-gradient(180deg, rgba(255,255,255,0.1) 0%, transparent 50%);
-    pointer-events: none;
-}
-
-.seeWeb_choseUIBtn_icon {
-    font-size: 15px;
-    line-height: 1;
-}
-
-.seeWeb_choseUIBtn_primary {
-    background: rgba(255, 255, 255, 0.18);
-    color: rgba(255, 255, 255, 0.95);
-    border: 1px solid rgba(255, 255, 255, 0.2);
-    box-shadow: 
-        0 2px 8px rgba(0, 0, 0, 0.25),
-        inset 0 1px 0 rgba(255, 255, 255, 0.15);
-}
-
-.seeWeb_choseUIBtn_primary:hover {
-    background: rgba(255, 255, 255, 0.25);
-    border-color: rgba(255, 255, 255, 0.3);
-    transform: translateY(-1px);
-    box-shadow: 
-        0 4px 12px rgba(0, 0, 0, 0.3),
-        inset 0 1px 0 rgba(255, 255, 255, 0.2);
-}
-
-.seeWeb_choseUIBtn_primary:active {
-    background: rgba(255, 255, 255, 0.12);
-    transform: translateY(0);
-    box-shadow: 
-        0 2px 6px rgba(0, 0, 0, 0.25),
-        inset 0 1px 0 rgba(255, 255, 255, 0.1);
-}
-
-.seeWeb_choseUIBtn_secondary {
-    background: rgba(255, 255, 255, 0.1);
-    color: rgba(255, 255, 255, 0.8);
-    border: 1px solid rgba(255, 255, 255, 0.12);
-}
-
-.seeWeb_choseUIBtn_secondary:hover {
-    background: rgba(255, 255, 255, 0.15);
-    color: rgba(255, 255, 255, 0.95);
-    border-color: rgba(255, 255, 255, 0.18);
-}
-
-.seeWeb_choseUIBtn_secondary:active {
-    background: rgba(255, 255, 255, 0.08);
-}
-
-/* 退出提示样式 */
-.seeWeb_exitHint {
-    overflow: hidden;
-    pointer-events: none;
-    position: fixed;
-    top: 20px;
-    right: 20px;
-    background-color: rgba(0, 0, 0, 0.7);
-    color: white;
-    padding: 8px 16px;
-    border-radius: 4px;
-    font-size: 14px;
-    font-family: Arial, sans-serif;
-    z-index: 9999;
-    display: none;
-    transition: all 0.3s ease;
-    text-align: right;
-}
-
-/* 提示词对话框样式 */
-.seeWeb_promptDialog {
-    position: fixed;
-    background-color: white;
-    border-radius: 8px;
-    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
-    width: 400px;
-    max-width: 90vw;
-    z-index: 10001;
-    display: none;
-    font-family: Arial, sans-serif;
-}
-
-.seeWeb_promptDialog_header {
     display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 15px 20px;
-    border-bottom: 1px solid #e0e0e0;
-    background-color: #f8f9fa;
-    border-radius: 8px 8px 0 0;
+    background: transparent;
+    z-index: 9999999;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
 }
 
-.seeWeb_promptDialog_title {
-    font-size: 16px;
-    font-weight: bold;
-    color: #333;
+/* 渲染区域 - 左侧网页显示区域 */
+.seeweb-render-area {
+    flex: 1;
+    min-width: 0;
+    background: transparent;
+    position: relative;
 }
 
-.seeWeb_promptDialog_close {
-    font-size: 24px;
-    color: #999;
-    cursor: pointer;
-    line-height: 1;
-    padding: 0 5px;
-}
-
-.seeWeb_promptDialog_close:hover {
-    color: #333;
-}
-
-.seeWeb_promptDialog_body {
-    padding: 20px;
-}
-
-.seeWeb_promptDialog_elementInfo {
-    background-color: #f0f4f8;
-    padding: 10px 15px;
-    border-radius: 4px;
-    font-size: 13px;
-    color: #555;
-    margin-bottom: 15px;
-    line-height: 1.5;
-}
-
-.seeWeb_promptDialog_textareaWrapper {
+/* 右侧面板 - 工具控制面板 */
+.seeweb-right-panel {
+    width: 360px;
+    min-width: 280px;
+    max-width: 600px;
+    background: #27293d;
     display: flex;
     flex-direction: column;
+    color: #e2e8f0;
+    border-left: 1px solid #374151;
+    box-shadow: -4px 0 20px rgba(0,0,0,0.15);
+    position: relative;
+    transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* 拖拽分割器 - 用于调整右侧面板宽度 */
+.seeweb-resizer {
+    width: 6px;
+    cursor: col-resize;
+    background: transparent;
+    position: absolute;
+    left: 0;
+    top: 0;
+    bottom: 0;
+    z-index: 1;
+    transition: background 0.2s;
+}
+
+/* 拖拽分割器悬停效果 */
+.seeweb-resizer:hover {
+    background: rgba(124, 58, 237, 0.3);
+}
+
+/* 顶部工具栏 - 显示标题和最小化按钮 */
+.seeweb-toolbar {
+    padding: 12px 16px;
+    background: linear-gradient(135deg, #3730a3 0%, #7c3aed 100%);
+    border-bottom: 1px solid rgba(255,255,255,0.1);
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    flex-shrink: 0;
+    justify-content: space-between;
+}
+
+/* 工具栏标题包装器 - 包含标题和副标题 */
+.seeweb-toolbar-title-wrapper {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+}
+
+/* 工具栏主标题 */
+.seeweb-toolbar-title {
+    font-size: 18px;
+    font-weight: 700;
+    color: white;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+/* 工具栏副标题 */
+.seeweb-toolbar-subtitle {
+    font-size: 11px;
+    color: rgba(255,255,255,0.7);
+}
+
+/* 最小化按钮 - 用于最小化右侧面板 */
+.seeweb-minimize-btn {
+    background: rgba(255,255,255,0.15);
+    border: none;
+    color: white;
+    width: 32px;
+    height: 32px;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 16px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.2s;
+}
+
+/* 最小化按钮悬停效果 */
+.seeweb-minimize-btn:hover {
+    background: rgba(255,255,255,0.25);
+}
+
+/* 面板内容区域 - 显示各种工具和设置 */
+.seeweb-panel-content {
+    flex: 1;
+    overflow-y: auto;
+    padding: 0;
+}
+
+/* 面板节 - 内容区域的每个功能区块 */
+.seeweb-panel-section {
+    border-bottom: 1px solid rgba(255,255,255,0.08);
+}
+
+/* 面板节标题 - 显示功能区块的标题 */
+.seeweb-panel-section-header {
+    padding: 14px 18px;
+    font-size: 12px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    color: #94a3b8;
+    background: rgba(0,0,0,0.2);
+    display: flex;
+    align-items: center;
     gap: 8px;
 }
 
-.seeWeb_promptDialog_label {
-    font-size: 14px;
-    color: #333;
-    font-weight: 500;
+/* 面板节内容 - 功能区块的具体内容 */
+.seeweb-panel-section-content {
+    padding: 16px 18px;
 }
 
-.seeWeb_promptDialog_textarea {
-    width: 100%;
-    min-height: 100px;
-    padding: 10px;
-    border: 1px solid #ddd;
-    border-radius: 4px;
-    font-size: 14px;
-    font-family: Arial, sans-serif;
-    resize: vertical;
-    box-sizing: border-box;
-}
-
-.seeWeb_promptDialog_textarea:focus {
-    outline: none;
-    border-color: #4a90d9;
-    box-shadow: 0 0 0 2px rgba(74, 144, 217, 0.2);
-}
-
-.seeWeb_promptDialog_footer {
-    display: flex;
-    justify-content: flex-end;
-    gap: 10px;
-    padding: 15px 20px;
-    border-top: 1px solid #e0e0e0;
-    background-color: #f8f9fa;
-    border-radius: 0 0 8px 8px;
-}
-
-.seeWeb_promptDialog_btn {
-    padding: 8px 20px;
-    border-radius: 4px;
-    font-size: 14px;
-    cursor: pointer;
-    border: none;
-    transition: background-color 0.2s;
-}
-
-.seeWeb_promptDialog_btnCancel {
-    background-color: #e0e0e0;
-    color: #555;
-}
-
-.seeWeb_promptDialog_btnCancel:hover {
-    background-color: #d0d0d0;
-}
-
-.seeWeb_promptDialog_btnConfirm {
-    background-color: #4a90d9;
-    color: white;
-}
-
-.seeWeb_promptDialog_btnConfirm:hover {
-    background-color: #3a7bc8;
-}
-
-/* 退出提示样式 */
-.seeWeb_exitHint {
-    overflow: hidden;
-    pointer-events: none;
+/* 浮动按钮 - 最小化后显示的圆形恢复按钮 */
+.seeweb-floating-button {
     position: fixed;
     top: 20px;
     right: 20px;
-    background-color: rgba(0, 0, 0, 0.7);
-    color: white;
-    padding: 8px 16px;
-    border-radius: 4px;
-    font-size: 14px;
-    font-family: Arial, sans-serif;
-    z-index: 9999;
+    width: 60px;
+    height: 60px;
+    background: linear-gradient(135deg, #3730a3 0%, #7c3aed 100%);
+    border-radius: 50%;
     display: none;
-    transition: all 0.3s ease;
-    text-align: right;
+    align-items: center;
+    justify-content: center;
+    font-size: 28px;
+    cursor: pointer;
+    z-index: 9999998;
+    box-shadow: 0 4px 20px rgba(124, 58, 237, 0.4);
+    /* transition: all 0.2s; */
+    user-select: none;
+    -webkit-user-select: none;
 }
+
+/* 浮动按钮悬停效果 */
+.seeweb-floating-button:hover {
+    transform: scale(1.1);
+}
+
+/* 浮动按钮点击效果 */
+.seeweb-floating-button:active {
+    transform: scale(0.95);
+}
+
+/* ========== 已弃用的样式（不再使用）========== */
+
+/*
+ * 以下样式已弃用，因为对应的 UI 组件已被删除：
+ * - choseUI.js（旧的选择模式 UI）
+ * - promptDialog.js（旧的提示词对话框）
+ * - lib/ui-manager/（旧的 UI 管理器）
+ */
+
+/* ---- 旧选择模式UI样式（choseUI.js 已删除）---- */
+/*
+.seeWeb_choseUI { 旧的选择模式 UI 容器 }
+.seeWeb_choseUI_header { 旧的选择模式 UI 头部 }
+.seeWeb_choseUI_minimizeBtn { 旧的选择模式 UI 最小化按钮 }
+.seeWeb_choseUI_minimized { 旧的选择模式 UI 最小化状态 }
+.seeWeb_choseUI_icon { 旧的选择模式 UI 图标 }
+.seeWeb_choseUI_title { 旧的选择模式 UI 标题 }
+.seeWeb_choseUI_section { 旧的选择模式 UI 区块 }
+.seeWeb_choseUI_label { 旧的选择模式 UI 标签 }
+.seeWeb_choseUI_modeButtons { 旧的选择模式 UI 模式按钮容器 }
+.seeWeb_choseUI_actionButtons { 旧的选择模式 UI 操作按钮容器 }
+.seeWeb_choseUI_tabs { 旧的选择模式 UI 标签页 }
+.seeWeb_choseUI_tab { 旧的选择模式 UI 标签 }
+.seeWeb_choseUI_tab_active { 旧的选择模式 UI 激活标签 }
+.seeWeb_choseUI_tabContent { 旧的选择模式 UI 标签内容 }
+.seeWeb_choseUI_createButtons { 旧的选择模式 UI 创建按钮容器 }
+.seeWeb_choseUIBtn { 旧的选择模式 UI 通用按钮 }
+.seeWeb_choseUIBtn_icon { 旧的选择模式 UI 按钮图标 }
+.seeWeb_choseUIBtn_primary { 旧的选择模式 UI 主按钮 }
+.seeWeb_choseUIBtn_secondary { 旧的选择模式 UI 次要按钮 }
+*/
+
+/* ---- 旧提示词对话框样式（promptDialog.js 已删除）---- */
+/*
+.seeWeb_promptDialog { 旧的提示词对话框容器 }
+.seeWeb_promptDialog_header { 旧的提示词对话框头部 }
+.seeWeb_promptDialog_title { 旧的提示词对话框标题 }
+.seeWeb_promptDialog_close { 旧的提示词对话框关闭按钮 }
+.seeWeb_promptDialog_body { 旧的提示词对话框内容 }
+.seeWeb_promptDialog_elementInfo { 旧的提示词对话框元素信息 }
+.seeWeb_promptDialog_textareaWrapper { 旧的提示词对话框文本域包装器 }
+.seeWeb_promptDialog_label { 旧的提示词对话框标签 }
+.seeWeb_promptDialog_textarea { 旧的提示词对话框文本域 }
+.seeWeb_promptDialog_footer { 旧的提示词对话框底部 }
+.seeWeb_promptDialog_btn { 旧的提示词对话框按钮 }
+.seeWeb_promptDialog_btnCancel { 旧的提示词对话框取消按钮 }
+.seeWeb_promptDialog_btnConfirm { 旧的提示词对话框确认按钮 }
+*/

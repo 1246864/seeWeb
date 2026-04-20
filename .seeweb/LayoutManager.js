@@ -80,124 +80,47 @@ class LayoutManager {
         // 1. 创建包装器
         this.wrapper = this._createElement('div', 'layout-wrapper');
         this.wrapper.className = 'seeweb-layout';
-        this.wrapper.style.cssText = `
-            position: fixed;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            display: flex;
-            background: transparent;
-            z-index: 9999999;
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-        `;
 
         // 2. 创建渲染占位区 (不移动 body，只占位置)
         this.renderArea = this._createElement('div', 'render-area');
         this.renderArea.className = 'seeweb-render-area';
-        this.renderArea.style.cssText = `
-            flex: 1;
-            min-width: 0;
-            background: transparent;
-            position: relative;
-        `;
 
         // 3. 创建拖拽分割器
         this.resizer = this._createElement('div', 'resizer');
-        this.resizer.style.cssText = `
-            width: 6px;
-            cursor: col-resize;
-            background: transparent;
-            position: absolute;
-            left: 0;
-            top: 0;
-            bottom: 0;
-            z-index: 1;
-            transition: background 0.2s;
-        `;
-        this.resizer.addEventListener('mouseenter', () => {
-            this.resizer.style.background = 'rgba(124, 58, 247, 0.3)';
-        });
-        this.resizer.addEventListener('mouseleave', () => {
-            this.resizer.style.background = 'transparent';
-        });
+        this.resizer.className = 'seeweb-resizer';
         this._bindResizerEvents();
 
         // 4. 创建右侧面板
         this.rightPanel = this._createElement('div', 'right-panel');
         this.rightPanel.className = 'seeweb-right-panel';
-        this.rightPanel.style.cssText = `
-            width: ${this.panelWidth}px;
-            min-width: 280px;
-            max-width: 600px;
-            background: #27293d;
-            display: flex;
-            flex-direction: column;
-            color: #e2e8f0;
-            border-left: 1px solid #374151;
-            box-shadow: -4px 0 20px rgba(0,0,0,0.15);
-            position: relative;
-        `;
+        this.rightPanel.style.width = `${this.panelWidth}px`;
         this.rightPanel.appendChild(this.resizer);
 
         // 4. 创建顶部工具栏
         this.toolbar = this._createElement('div', 'top-toolbar');
         this.toolbar.className = 'seeweb-toolbar';
-        this.toolbar.style.cssText = `
-            padding: 12px 16px;
-            background: linear-gradient(135deg, #3730a3 0%, #7c3aed 100%);
-            border-bottom: 1px solid rgba(255,255,255,0.1);
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            flex-shrink: 0;
-            justify-content: space-between;
-        `;
 
         // 工具栏标题
         const titleWrapper = this._createElement('div', 'toolbar-title-wrapper');
+        titleWrapper.className = 'seeweb-toolbar-title-wrapper';
         titleWrapper.innerHTML = `
-            <div style="font-size: 18px; font-weight: 700; color: white; display: flex; align-items: center; gap: 10px;">
+            <div class="seeweb-toolbar-title">
                 <span style="font-size: 24px;">🎨</span> SeeWeb Pro
             </div>
-            <div style="font-size: 11px; color: rgba(255,255,255,0.7); margin-top: 2px;">DOM 设计与编辑工具</div>
+            <div class="seeweb-toolbar-subtitle">DOM 设计与编辑工具</div>
         `;
         this.toolbar.appendChild(titleWrapper);
 
         // 最小化按钮
         this.minimizeBtn = this._createElement('button', 'minimize-btn');
+        this.minimizeBtn.className = 'seeweb-minimize-btn';
         this.minimizeBtn.innerHTML = '➖';
-        this.minimizeBtn.style.cssText = `
-            background: rgba(255,255,255,0.15);
-            border: none;
-            color: white;
-            width: 32px;
-            height: 32px;
-            border-radius: 8px;
-            cursor: pointer;
-            font-size: 16px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            transition: all 0.2s;
-        `;
-        this.minimizeBtn.addEventListener('mouseenter', () => {
-            this.minimizeBtn.style.background = 'rgba(255,255,255,0.25)';
-        });
-        this.minimizeBtn.addEventListener('mouseleave', () => {
-            this.minimizeBtn.style.background = 'rgba(255,255,255,0.15)';
-        });
         this.minimizeBtn.addEventListener('click', () => this.minimize());
         this.toolbar.appendChild(this.minimizeBtn);
 
         // 5. 创建面板内容区域
         this.panelContent = this._createElement('div', 'panel-content');
         this.panelContent.className = 'seeweb-panel-content';
-        this.panelContent.style.cssText = `
-            flex: 1;
-            overflow-y: auto;
-            padding: 0;
-        `;
 
         // 组装
         this.rightPanel.appendChild(this.toolbar);
@@ -218,31 +141,18 @@ class LayoutManager {
 
         // 7. 创建浮动恢复按钮 - 使用代理工厂
         this.floatingButton = this._createElement('div', 'floating-button');
+        this.floatingButton.className = 'seeweb-floating-button';
         this.floatingButton.innerHTML = '🎨';
-        this.floatingButton.style.cssText = `
-            position: fixed;
-            top: 20px;
-            right: 20px;
-            width: 60px;
-            height: 60px;
-            background: linear-gradient(135deg, #3730a3 0%, #7c3aed 100%);
-            border-radius: 50%;
-            display: none;
-            align-items: center;
-            justify-content: center;
-            font-size: 28px;
-            cursor: pointer;
-            z-index: 9999998;
-            box-shadow: 0 4px 20px rgba(124, 58, 247, 0.4);
-            transition: all 0.2s;
-        `;
-        this.floatingButton.addEventListener('mouseenter', () => {
-            this.floatingButton.style.transform = 'scale(1.1)';
+        
+        // 添加拖拽功能（要在点击事件之前添加）
+        this._addDragFunctionality();
+        
+        // 添加点击事件（在拖拽功能之后）
+        this.floatingButton.addEventListener('click', (e) => {
+            if (!this.dragClickPrevented) {
+                this.restoreFromMinimized();
+            }
         });
-        this.floatingButton.addEventListener('mouseleave', () => {
-            this.floatingButton.style.transform = 'scale(1)';
-        });
-        this.floatingButton.addEventListener('click', () => this.restoreFromMinimized());
     }
 
     /**
@@ -254,6 +164,7 @@ class LayoutManager {
         // 设置 body 样式 - 只压缩右边
         document.body.style.width = `calc(100% - ${this.panelWidth}px)`;
         document.body.style.marginRight = `${this.panelWidth}px`;
+        document.body.style.transition = 'width 0.3s cubic-bezier(0.4, 0, 0.2, 1), margin-right 0.3s cubic-bezier(0.4, 0, 0.2, 1)';
 
         // 把 wrapper 插入到 html 下
         document.documentElement.appendChild(this.wrapper);
@@ -279,19 +190,25 @@ class LayoutManager {
         document.body.style.width = this.originalBodyStyle.width || '';
         document.body.style.marginRight = this.originalBodyStyle.marginRight || '';
 
-        // 隐藏 wrapper
-        this.wrapper.style.display = 'none';
+        // 面板滑出动画
+        this.rightPanel.style.transform = `translateX(${this.panelWidth}px)`;
 
-        // 显示浮动按钮
-        try {
-            if (this.floatingButton.parentNode) {
-                this.floatingButton.parentNode.removeChild(this.floatingButton);
-            }
-        } catch (e) {}
-        document.body.appendChild(this.floatingButton);
-        this.floatingButton.style.display = 'flex';
+        // 动画结束后隐藏面板并显示浮动按钮
+        setTimeout(() => {
+            // 隐藏 wrapper
+            this.wrapper.style.display = 'none';
 
-        this.isMinimized = true;
+            // 显示浮动按钮
+            try {
+                if (this.floatingButton.parentNode) {
+                    this.floatingButton.parentNode.removeChild(this.floatingButton);
+                }
+            } catch (e) {}
+            document.body.appendChild(this.floatingButton);
+            this.floatingButton.style.display = 'flex';
+
+            this.isMinimized = true;
+        }, 300);
     }
 
     /**
@@ -312,6 +229,15 @@ class LayoutManager {
 
         // 显示 wrapper
         this.wrapper.style.display = 'flex';
+
+        // 面板初始位置（在屏幕外）
+        this.rightPanel.style.transform = `translateX(${this.panelWidth}px)`;
+
+        // 强制重排
+        void this.rightPanel.offsetWidth;
+
+        // 面板滑入动画
+        this.rightPanel.style.transform = 'translateX(0)';
 
         // 显示标记框
         if (this.choseManager) {
@@ -340,11 +266,17 @@ class LayoutManager {
         document.body.style.width = this.originalBodyStyle.width || '';
         document.body.style.marginRight = this.originalBodyStyle.marginRight || '';
 
-        // 隐藏 wrapper
-        this.wrapper.style.display = 'none';
+        // 面板滑出动画
+        this.rightPanel.style.transform = `translateX(${this.panelWidth}px)`;
 
-        // 不显示浮动按钮
-        this.isSelectionMode = true;
+        // 动画结束后隐藏面板
+        setTimeout(() => {
+            // 隐藏 wrapper
+            this.wrapper.style.display = 'none';
+
+            // 不显示浮动按钮
+            this.isSelectionMode = true;
+        }, 300);
     }
 
     /**
@@ -361,6 +293,15 @@ class LayoutManager {
 
         // 显示 wrapper
         this.wrapper.style.display = 'flex';
+
+        // 面板初始位置（在屏幕外）
+        this.rightPanel.style.transform = `translateX(${widthToUse}px)`;
+
+        // 强制重排
+        void this.rightPanel.offsetWidth;
+
+        // 面板滑入动画
+        this.rightPanel.style.transform = 'translateX(0)';
 
         this.isSelectionMode = false;
     }
@@ -407,29 +348,14 @@ class LayoutManager {
     addToPanel(element, sectionTitle) {
         if (sectionTitle) {
             const section = this._createElement('div', 'panel-section');
-            section.style.cssText = `
-                border-bottom: 1px solid rgba(255,255,255,0.08);
-            `;
+            section.className = 'seeweb-panel-section';
             
             const header = this._createElement('div', 'panel-section-header');
-            header.style.cssText = `
-                padding: 14px 18px;
-                font-size: 12px;
-                font-weight: 700;
-                text-transform: uppercase;
-                letter-spacing: 0.5px;
-                color: #94a3b8;
-                background: rgba(0,0,0,0.2);
-                display: flex;
-                align-items: center;
-                gap: 8px;
-            `;
+            header.className = 'seeweb-panel-section-header';
             header.textContent = sectionTitle;
             
             const content = this._createElement('div', 'panel-section-content');
-            content.style.cssText = `
-                padding: 16px 18px;
-            `;
+            content.className = 'seeweb-panel-section-content';
             content.appendChild(element);
             
             section.appendChild(header);
@@ -445,6 +371,78 @@ class LayoutManager {
      */
     getRenderArea() {
         return this.renderArea;
+    }
+
+    /**
+     * 添加拖拽功能到浮动按钮
+     */
+    _addDragFunctionality() {
+        let isDragging = false;
+        let startX = 0;
+        let startY = 0;
+        let startTop = 0;
+        let startRight = 0;
+        this.dragClickPrevented = false;
+
+        this.floatingButton.addEventListener('mousedown', (e) => {
+            // 只有当点击的是按钮本身（不是内部元素）时才开始拖拽
+            if (e.target === this.floatingButton) {
+                isDragging = true;
+                this.dragClickPrevented = false;
+                startX = e.clientX;
+                startY = e.clientY;
+                startTop = parseInt(this.floatingButton.style.top) || 20;
+                startRight = parseInt(this.floatingButton.style.right) || 20;
+                
+                // 改变鼠标样式
+                document.body.style.cursor = 'grabbing';
+                
+                // 防止默认行为
+                e.preventDefault();
+            }
+        });
+
+        document.addEventListener('mousemove', (e) => {
+            if (!isDragging) return;
+            
+            // 计算新位置
+            const deltaX = e.clientX - startX;
+            const deltaY = e.clientY - startY;
+            
+            // 检查是否有明显移动
+            if (Math.abs(deltaX) > 5 || Math.abs(deltaY) > 5) {
+                this.dragClickPrevented = true;
+            }
+            
+            // 计算新的 top 和 right 值
+            let newTop = startTop + deltaY;
+            let newRight = startRight - deltaX;
+            
+            // 限制在视口内
+            const buttonWidth = 60;
+            const buttonHeight = 60;
+            const viewportWidth = window.innerWidth;
+            const viewportHeight = window.innerHeight;
+            
+            newTop = Math.max(10, Math.min(viewportHeight - buttonHeight - 10, newTop));
+            newRight = Math.max(10, Math.min(viewportWidth - buttonWidth - 10, newRight));
+            
+            // 更新位置
+            this.floatingButton.style.top = `${newTop}px`;
+            this.floatingButton.style.right = `${newRight}px`;
+        });
+
+        document.addEventListener('mouseup', () => {
+            if (isDragging) {
+                isDragging = false;
+                document.body.style.cursor = 'default';
+                
+                // 延迟重置标志，确保点击事件已经被阻止
+                setTimeout(() => {
+                    this.dragClickPrevented = false;
+                }, 50);
+            }
+        });
     }
 
     /**
