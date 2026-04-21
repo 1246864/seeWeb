@@ -6,12 +6,12 @@
 class LayoutManager {
     constructor(options = {}) {
         this.proxyFactory = options.proxyFactory;
-        
+
         // 验证必需依赖
         if (!this.proxyFactory) {
             throw new Error('LayoutManager: proxyFactory is required');
         }
-        
+
         this.panelWidth = 360;
         this.isInitialized = false;
         this.isMinimized = false;
@@ -21,7 +21,7 @@ class LayoutManager {
         this.toolbar = null;
         this.floatingButton = null;
         this.choseManager = null;
-        
+
         this._createLayout();
     }
 
@@ -43,25 +43,25 @@ class LayoutManager {
             startX = e.clientX;
             startWidth = this.rightPanel.offsetWidth;
             document.body.style.transition = 'none';
-            
+
             // 添加全局事件
             document.addEventListener('mousemove', onMouseMove);
             document.addEventListener('mouseup', onMouseUp);
-            
+
             // 防止选择文本
             e.preventDefault();
         });
 
         const onMouseMove = (e) => {
             if (!isResizing) return;
-            
+
             // 计算新宽度（从右边拖）
             const deltaX = startX - e.clientX;
             let newWidth = startWidth + deltaX;
-            
+
             // 限制范围
             newWidth = Math.max(280, Math.min(600, newWidth));
-            
+
             // 更新
             this.panelWidth = newWidth;
             this.rightPanel.style.width = `${newWidth}px`;
@@ -126,7 +126,7 @@ class LayoutManager {
         // 组装
         this.rightPanel.appendChild(this.toolbar);
         this.rightPanel.appendChild(this.panelContent);
-        
+
         this.wrapper.appendChild(this.renderArea);
         this.wrapper.appendChild(this.rightPanel);
 
@@ -144,10 +144,10 @@ class LayoutManager {
         this.floatingButton = this._createElement('div', 'floating-button');
         this.floatingButton.className = 'seeweb-floating-button';
         this.floatingButton.innerHTML = '🎨';
-        
+
         // 添加拖拽功能（要在点击事件之前添加）
         this._addDragFunctionality();
-        
+
         // 添加点击事件（在拖拽功能之后）
         this.floatingButton.addEventListener('click', (e) => {
             if (!this.dragClickPrevented) {
@@ -181,7 +181,7 @@ class LayoutManager {
      */
     minimize() {
         if (!this.isInitialized || this.isMinimized) return;
-        
+
         // 隐藏标记框
         if (this.choseManager) {
             this.choseManager.hideAllMarkers();
@@ -194,22 +194,23 @@ class LayoutManager {
         // 面板滑出动画
         this.rightPanel.style.transform = `translateX(${this.panelWidth}px)`;
 
-        // 动画结束后隐藏面板并显示浮动按钮
+        // 动画结束后隐藏面板
         setTimeout(() => {
             // 隐藏 wrapper
             this.wrapper.style.display = 'none';
-
-            // 显示浮动按钮
-            try {
-                if (this.floatingButton.parentNode) {
-                    this.floatingButton.parentNode.removeChild(this.floatingButton);
-                }
-            } catch (e) {}
-            document.body.appendChild(this.floatingButton);
-            this.floatingButton.style.display = 'flex';
-
             this.isMinimized = true;
         }, 300);
+
+        // 显示浮动按钮
+        try {
+            if (this.floatingButton.parentNode) {
+                this.floatingButton.parentNode.removeChild(this.floatingButton);
+            }
+        } catch (e) { }
+        this.floatingButton.style.right = '20px';
+        this.floatingButton.style.top = '20px';
+        document.body.appendChild(this.floatingButton);
+        this.floatingButton.style.display = 'flex';
     }
 
     /**
@@ -253,16 +254,16 @@ class LayoutManager {
      */
     hideForSelection() {
         if (!this.isInitialized) return;
-        
+
         // 保存当前状态
         this.wasMinimized = this.isMinimized;
         this.savedPanelWidth = this.panelWidth;
-        
+
         // 如果已经最小化了，先恢复
         if (this.isMinimized) {
             this.restoreFromMinimized();
         }
-        
+
         // 恢复 body 原始样式
         document.body.style.width = this.originalBodyStyle.width || '100%';
         document.body.style.marginRight = this.originalBodyStyle.marginRight || '';
@@ -287,7 +288,7 @@ class LayoutManager {
         if (!this.isSelectionMode) return;
 
         const widthToUse = this.savedPanelWidth || this.panelWidth;
-        
+
         // 压缩 body 右边
         document.body.style.width = `calc(100% - ${widthToUse}px)`;
         document.body.style.marginRight = `${widthToUse}px`;
@@ -350,15 +351,15 @@ class LayoutManager {
         if (sectionTitle) {
             const section = this._createElement('div', 'panel-section');
             section.className = 'seeweb-panel-section';
-            
+
             const header = this._createElement('div', 'panel-section-header');
             header.className = 'seeweb-panel-section-header';
             header.textContent = sectionTitle;
-            
+
             const content = this._createElement('div', 'panel-section-content');
             content.className = 'seeweb-panel-section-content';
             content.appendChild(element);
-            
+
             section.appendChild(header);
             section.appendChild(content);
             this.panelContent.appendChild(section);
@@ -394,10 +395,10 @@ class LayoutManager {
                 startY = e.clientY;
                 startTop = parseInt(this.floatingButton.style.top) || 20;
                 startRight = parseInt(this.floatingButton.style.right) || 20;
-                
+
                 // 改变鼠标样式
                 document.body.style.cursor = 'grabbing';
-                
+
                 // 防止默认行为
                 e.preventDefault();
             }
@@ -405,29 +406,29 @@ class LayoutManager {
 
         document.addEventListener('mousemove', (e) => {
             if (!isDragging) return;
-            
+
             // 计算新位置
             const deltaX = e.clientX - startX;
             const deltaY = e.clientY - startY;
-            
+
             // 检查是否有明显移动
             if (Math.abs(deltaX) > 5 || Math.abs(deltaY) > 5) {
                 this.dragClickPrevented = true;
             }
-            
+
             // 计算新的 top 和 right 值
             let newTop = startTop + deltaY;
             let newRight = startRight - deltaX;
-            
+
             // 限制在视口内
             const buttonWidth = 60;
             const buttonHeight = 60;
             const viewportWidth = window.innerWidth;
             const viewportHeight = window.innerHeight;
-            
+
             newTop = Math.max(10, Math.min(viewportHeight - buttonHeight - 10, newTop));
             newRight = Math.max(10, Math.min(viewportWidth - buttonWidth - 10, newRight));
-            
+
             // 更新位置
             this.floatingButton.style.top = `${newTop}px`;
             this.floatingButton.style.right = `${newRight}px`;
@@ -437,7 +438,7 @@ class LayoutManager {
             if (isDragging) {
                 isDragging = false;
                 document.body.style.cursor = 'default';
-                
+
                 // 延迟重置标志，确保点击事件已经被阻止
                 setTimeout(() => {
                     this.dragClickPrevented = false;
