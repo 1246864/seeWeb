@@ -97,25 +97,98 @@ class DOMProxy {
             return false;
         }
 
-        if (!this._parent || !this._parent.isConnected) {
+        // 检查当前父元素是否有效，如果无效尝试重新定位
+        if (!this._parent || !this._parent.isConnected || 
+            this._parent.nodeType !== Node.ELEMENT_NODE) {
+            
+            // 尝试重新定位到 document.body 或其他可用的容器
+            if (!this._relocateParent()) {
+                console.warn('DOMProxy: 无法找到有效的父元素，无法恢复元素', this._element);
+                return false;
+            }
+        }
+
+        // 检查 nextSibling 是否仍然有效（在 DOM 树中且属于同一父元素）
+        let insertBeforeNode = null;
+        if (this._nextSibling) {
+            // 检查 nextSibling 是否仍然存在于 DOM 中且属于预期的父元素
+            if (this._nextSibling.parentNode === this._parent) {
+                insertBeforeNode = this._nextSibling;
+            } else {
+                // 如果原来的 nextSibling 不再有效，尝试找到最近的有效兄弟元素
+                let sibling = this._nextSibling;
+                while (sibling && sibling.parentNode !== this._parent) {
+                    sibling = sibling.nextSibling;
+                }
+                if (sibling && sibling.parentNode === this._parent) {
+                    insertBeforeNode = sibling;
+                }
+            }
+        }
+
+        try {
+            // 重新插入到DOM树
+            if (insertBeforeNode) {
+                this._parent.insertBefore(this._element, insertBeforeNode);
+            } else {
+                this._parent.appendChild(this._element);
+            }
+            
+            // 验证元素是否真的被插入到DOM中了
+            if (!this._element.isConnected) {
+                // 如果没有连接，尝试再次追加
+                this._parent.appendChild(this._element);
+            }
+            
+            // 再次验证
+            if (!this._element.isConnected) {
+                console.error('DOMProxy: 元素恢复失败，仍然没有连接到DOM', this._element);
+                return false;
+            }
+            
+            this._isSuspended = false;
+            return true;
+        } catch (error) {
+            console.error('DOMProxy: 恢复元素失败', error, this._element);
             return false;
         }
+    }
 
-        // 检查 nextSibling 是否仍然有效（在 DOM 树中）
-        let insertBeforeNode = null;
-        if (this._nextSibling && this._nextSibling.parentNode === this._parent) {
-            insertBeforeNode = this._nextSibling;
+    /**
+     * 尝试重新定位父元素
+     * @returns {boolean} 是否成功重新定位
+     */
+    _relocateParent() {
+        // 尝试找到一个合适的父元素
+        const candidates = [
+            document.body,
+            document.head,
+            document.documentElement
+        ];
+
+        for (const candidate of candidates) {
+            if (candidate && candidate.isConnected && candidate.nodeType === Node.ELEMENT_NODE) {
+                this._parent = candidate;
+                this._nextSibling = null; // 重置兄弟节点
+                return true;
+            }
         }
 
-        // 重新插入到DOM树
-        if (insertBeforeNode) {
-            this._parent.insertBefore(this._element, insertBeforeNode);
-        } else {
-            this._parent.appendChild(this._element);
+        return false;
+    }
+
+    /**
+     * 检查是否可以恢复元素（依赖检查）
+     * @returns {boolean} 是否可以恢复
+     */
+    canResume() {
+        // 如果没有父元素，可以直接恢复
+        if (!this._parent) {
+            return true;
         }
 
-        this._isSuspended = false;
-        return true;
+        // 检查父元素是否仍然有效
+        return this._parent.isConnected && this._parent.nodeType === Node.ELEMENT_NODE;
     }
 
     /**
@@ -141,3 +214,4 @@ if (typeof exports !== 'undefined' && !exports.default) {
 if (typeof window !== 'undefined') {
     window.DOMProxy = DOMProxy;
 }
+

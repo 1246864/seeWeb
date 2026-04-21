@@ -39,9 +39,8 @@ class ChoseManager {
         this.layoutManager = lm;
     }
 
-    // 辅助方法：直接创建元素（不使用代理，避免被 suspendAll 移除）
     _createElement(tag, key) {
-        return document.createElement(tag);
+        return this.proxyFactory.createElement(tag, key);
     }
 
     // 生成唯一的marker key
@@ -118,7 +117,7 @@ class ChoseManager {
         // 使用工厂创建表示框，自动注册到代理工厂
         const markerBox = this._createElement('div', this._generateMarkerKey());
         markerBox.className = 'seeWeb_choseMarker';
-        markerBox.style.cssText = 'z-index: 10000000; pointer-events: none;'; // 提高 z-index
+        // markerBox.style.cssText = 'z-index: 10000000; pointer-events: none;'; // 提高 z-index
         
         // 直接插入到 html 下面
         document.documentElement.appendChild(markerBox);
@@ -150,7 +149,7 @@ class ChoseManager {
             markerBox.style.height = `${height + padding * 2}px`;
             markerBox.style.borderRadius = `${padding}px`;
             markerBox.style.position = 'fixed'; // 确保是 fixed
-            markerBox.style.zIndex = '10000000'; // 非常高的 z-index
+            // markerBox.style.zIndex = '10000000'; // 非常高的 z-index
         } catch (error) {
             console.error('更新表示框位置失败:', error);
         }

@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="zh-CN">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -10,44 +11,44 @@
             padding: 0;
             box-sizing: border-box;
         }
-        
+
         body {
             font-family: Arial, sans-serif;
             line-height: 1.6;
             color: #333;
             background-color: #f4f4f4;
         }
-        
+
         .container {
             max-width: 1200px;
             margin: 0 auto;
             padding: 20px;
         }
-        
+
         header {
             background-color: #35424a;
             color: white;
             padding: 30px 0;
             text-align: center;
             margin-bottom: 30px;
-            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
         }
-        
+
         nav {
             background-color: #35424a;
             padding: 15px 0;
             margin-bottom: 30px;
             border-radius: 5px;
-            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
         }
-        
+
         nav ul {
             list-style: none;
             display: flex;
             justify-content: center;
             gap: 20px;
         }
-        
+
         nav ul li a {
             color: white;
             text-decoration: none;
@@ -55,25 +56,25 @@
             border-radius: 3px;
             transition: background-color 0.3s;
         }
-        
+
         nav ul li a:hover {
             background-color: #4a5b66;
         }
-        
+
         .section {
             background-color: white;
             padding: 30px;
             margin-bottom: 30px;
             border-radius: 5px;
-            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
         }
-        
+
         h1 {
             font-size: 2.5rem;
             margin-bottom: 20px;
             color: #35424a;
         }
-        
+
         h2 {
             font-size: 1.8rem;
             margin-bottom: 15px;
@@ -81,18 +82,18 @@
             border-bottom: 2px solid #e67e22;
             padding-bottom: 10px;
         }
-        
+
         h3 {
             font-size: 1.4rem;
             margin-bottom: 10px;
             color: #555;
         }
-        
+
         p {
             margin-bottom: 15px;
             text-align: justify;
         }
-        
+
         .dom-tree {
             background-color: #f9f9f9;
             padding: 20px;
@@ -100,7 +101,7 @@
             margin: 20px 0;
             border-left: 4px solid #e67e22;
         }
-        
+
         .element-card {
             background-color: #f9f9f9;
             padding: 20px;
@@ -109,17 +110,17 @@
             border: 1px solid #ddd;
             transition: transform 0.3s, box-shadow 0.3s;
         }
-        
+
         .element-card:hover {
             transform: translateY(-5px);
-            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
         }
-        
+
         .element-card h4 {
             color: #e67e22;
             margin-bottom: 10px;
         }
-        
+
         .code-block {
             background-color: #f4f4f4;
             padding: 15px;
@@ -129,7 +130,7 @@
             white-space: pre-wrap;
             border-left: 4px solid #35424a;
         }
-        
+
         .example {
             background-color: #f0f8ff;
             padding: 20px;
@@ -137,7 +138,7 @@
             margin: 20px 0;
             border: 1px solid #b0e0e6;
         }
-        
+
         .example button {
             background-color: #35424a;
             color: white;
@@ -147,11 +148,11 @@
             cursor: pointer;
             margin: 5px;
         }
-        
+
         .example button:hover {
             background-color: #4a5b66;
         }
-        
+
         .example-output {
             background-color: #f9f9f9;
             padding: 15px;
@@ -160,31 +161,34 @@
             min-height: 50px;
             border: 1px solid #ddd;
         }
-        
+
         table {
             width: 100%;
             border-collapse: collapse;
             margin: 20px 0;
         }
-        
-        table, th, td {
+
+        table,
+        th,
+        td {
             border: 1px solid #ddd;
         }
-        
-        th, td {
+
+        th,
+        td {
             padding: 12px;
             text-align: left;
         }
-        
+
         th {
             background-color: #35424a;
             color: white;
         }
-        
+
         tr:nth-child(even) {
             background-color: #f2f2f2;
         }
-        
+
         footer {
             background-color: #35424a;
             color: white;
@@ -193,12 +197,12 @@
             margin-top: 30px;
             border-radius: 5px;
         }
-        
+
         .highlight {
             color: #e67e22;
             font-weight: bold;
         }
-        
+
         .grid {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
@@ -207,12 +211,13 @@
         }
     </style>
 </head>
+
 <body>
     <header>
         <h1>DOM 入门指南</h1>
         <p>探索文档对象模型的世界</p>
     </header>
-    
+
     <div class="container">
         <nav>
             <ul>
@@ -223,10 +228,11 @@
                 <li><a href="#examples">实例演示</a></li>
             </ul>
         </nav>
-        
+
         <section id="intro" class="section">
             <h2>什么是 DOM？</h2>
-            <p>DOM (Document Object Model) 是一种用于表示和操作 HTML、XML 文档的编程接口。它将文档解析为一个由节点和对象组成的树结构，使开发者能够通过编程语言（如 JavaScript）来访问和修改文档的内容、结构和样式。</p>
+            <p>DOM (Document Object Model) 是一种用于表示和操作 HTML、XML 文档的编程接口。它将文档解析为一个由节点和对象组成的树结构，使开发者能够通过编程语言（如
+                JavaScript）来访问和修改文档的内容、结构和样式。</p>
             <p>DOM 提供了一种结构化的方式来表示文档，使得开发者可以：</p>
             <ul style="margin-left: 20px; margin-bottom: 15px;">
                 <li>访问和修改文档中的元素</li>
@@ -236,11 +242,11 @@
                 <li>响应用户交互事件</li>
             </ul>
         </section>
-        
+
         <section id="tree" class="section">
             <h2>DOM 树结构</h2>
             <p>DOM 将文档表示为一个树状结构，其中每个节点都是文档的一部分。树的顶部是根节点（通常是 <code>&lt;html&gt;</code> 元素），然后分支到子节点，形成一个层次结构。</p>
-            
+
             <div class="dom-tree">
                 <h3>DOM 树示例：</h3>
                 <pre>
@@ -260,7 +266,7 @@
         └── footer
             └── p</pre>
             </div>
-            
+
             <p>在 DOM 树中，每个节点都可以是以下类型之一：</p>
             <ul style="margin-left: 20px; margin-bottom: 15px;">
                 <li><span class="highlight">元素节点</span>：如 &lt;div&gt;、&lt;p&gt;、&lt;h1&gt; 等</li>
@@ -270,11 +276,11 @@
                 <li><span class="highlight">文档节点</span>：整个文档的根节点</li>
             </ul>
         </section>
-        
+
         <section id="elements" class="section">
             <h2>常见 DOM 元素</h2>
             <p>HTML 文档由各种元素组成，每种元素都有其特定的用途和属性。以下是一些常见的 DOM 元素：</p>
-            
+
             <div class="grid">
                 <div class="element-card">
                     <h4>块级元素</h4>
@@ -289,7 +295,7 @@
                         <li>&lt;footer&gt; - 底部区域</li>
                     </ul>
                 </div>
-                
+
                 <div class="element-card">
                     <h4>内联元素</h4>
                     <p>内联元素不会独占一行，通常用于文本中的内容。</p>
@@ -303,7 +309,7 @@
                         <li>&lt;input&gt; - 输入控件</li>
                     </ul>
                 </div>
-                
+
                 <div class="element-card">
                     <h4>表单元素</h4>
                     <p>用于收集用户输入的元素。</p>
@@ -318,11 +324,11 @@
                 </div>
             </div>
         </section>
-        
+
         <section id="methods" class="section">
             <h2>DOM 操作方法</h2>
             <p>JavaScript 提供了多种方法来操作 DOM 元素。以下是一些常用的 DOM 操作方法：</p>
-            
+
             <table>
                 <tr>
                     <th>方法</th>
@@ -378,59 +384,59 @@
                 </tr>
             </table>
         </section>
-        
+
         <section id="examples" class="section">
             <h2>DOM 操作实例演示</h2>
-            
+
             <div class="example">
                 <h3>示例 1：修改元素内容</h3>
                 <p>点击按钮修改下方段落的内容：</p>
                 <button onclick="changeText()">修改文本内容</button>
                 <div class="example-output" id="output1">这是初始文本内容</div>
-                
+
                 <div class="code-block">
-function changeText() {
-    const element = document.getElementById('output1');
-    element.textContent = '文本内容已被修改！';
-}</div>
+                    function changeText() {
+                    const element = document.getElementById('output1');
+                    element.textContent = '文本内容已被修改！';
+                    }</div>
             </div>
-            
+
             <div class="example">
                 <h3>示例 2：创建新元素</h3>
                 <p>点击按钮在下方添加新的段落：</p>
                 <button onclick="createElement()">添加新段落</button>
                 <div class="example-output" id="output2"></div>
-                
+
                 <div class="code-block">
-function createElement() {
-    const newParagraph = document.createElement('p');
-    newParagraph.textContent = '这是新创建的段落元素';
-    const container = document.getElementById('output2');
-    container.appendChild(newParagraph);
-}</div>
+                    function createElement() {
+                    const newParagraph = document.createElement('p');
+                    newParagraph.textContent = '这是新创建的段落元素';
+                    const container = document.getElementById('output2');
+                    container.appendChild(newParagraph);
+                    }</div>
             </div>
-            
+
             <div class="example">
                 <h3>示例 3：修改元素样式</h3>
                 <p>点击按钮修改下方元素的样式：</p>
                 <button onclick="changeStyle()">修改样式</button>
                 <div class="example-output" id="output3">这是一个可以修改样式的元素</div>
-                
+
                 <div class="code-block">
-function changeStyle() {
-    const element = document.getElementById('output3');
-    element.style.backgroundColor = '#e67e22';
-    element.style.color = 'white';
-    element.style.padding = '15px';
-    element.style.borderRadius = '5px';
-}</div>
+                    function changeStyle() {
+                    const element = document.getElementById('output3');
+                    element.style.backgroundColor = '#e67e22';
+                    element.style.color = 'white';
+                    element.style.padding = '15px';
+                    element.style.borderRadius = '5px';
+                    }</div>
             </div>
         </section>
-        
+
         <section class="section">
             <h2>DOM 事件处理</h2>
             <p>DOM 允许我们为元素添加事件监听器，以响应用户的交互行为。常见的事件包括：</p>
-            
+
             <div class="grid">
                 <div class="element-card">
                     <h4>鼠标事件</h4>
@@ -442,7 +448,7 @@ function changeStyle() {
                         <li>mouseup - 鼠标释放</li>
                     </ul>
                 </div>
-                
+
                 <div class="element-card">
                     <h4>键盘事件</h4>
                     <ul style="margin-left: 20px;">
@@ -451,7 +457,7 @@ function changeStyle() {
                         <li>keypress - 按键按下并释放</li>
                     </ul>
                 </div>
-                
+
                 <div class="element-card">
                     <h4>表单事件</h4>
                     <ul style="margin-left: 20px;">
@@ -463,25 +469,25 @@ function changeStyle() {
                     </ul>
                 </div>
             </div>
-            
+
             <div class="example">
                 <h3>事件监听器示例</h3>
                 <p>点击下方按钮触发事件：</p>
                 <button id="eventBtn">点击我</button>
                 <div class="example-output" id="eventOutput"></div>
-                
+
                 <div class="code-block">
-// 使用 addEventListener 添加事件监听器
-document.getElementById('eventBtn').addEventListener('click', function() {
-    document.getElementById('eventOutput').textContent = '按钮被点击了！';
-});</div>
+                    // 使用 addEventListener 添加事件监听器
+                    document.getElementById('eventBtn').addEventListener('click', function() {
+                    document.getElementById('eventOutput').textContent = '按钮被点击了！';
+                    });</div>
             </div>
         </section>
-        
+
         <section class="section">
             <h2>DOM 遍历</h2>
             <p>DOM 提供了多种方法来遍历节点树，包括：</p>
-            
+
             <table>
                 <tr>
                     <th>属性</th>
@@ -514,18 +520,18 @@ document.getElementById('eventBtn').addEventListener('click', function() {
             </table>
         </section>
     </div>
-    
+
     <footer>
         <p>&copy; 2026 DOM 入门指南 | 探索网页开发的基础知识</p>
     </footer>
-    
+
     <script>
         // 示例 1：修改元素内容
         function changeText() {
             const element = document.getElementById('output1');
             element.textContent = '文本内容已被修改！';
         }
-        
+
         // 示例 2：创建新元素
         function createElement() {
             const newParagraph = document.createElement('p');
@@ -533,7 +539,7 @@ document.getElementById('eventBtn').addEventListener('click', function() {
             const container = document.getElementById('output2');
             container.appendChild(newParagraph);
         }
-        
+
         // 示例 3：修改元素样式
         function changeStyle() {
             const element = document.getElementById('output3');
@@ -542,19 +548,15 @@ document.getElementById('eventBtn').addEventListener('click', function() {
             element.style.padding = '15px';
             element.style.borderRadius = '5px';
         }
-        
+
         // 事件监听器示例
-        document.getElementById('eventBtn').addEventListener('click', function() {
+        document.getElementById('eventBtn').addEventListener('click', function () {
             document.getElementById('eventOutput').textContent = '按钮被点击了！';
         });
     </script>
-    
 
-</body>
-</html>
-
-<!-- 切割标识 00000000 -->
-<link rel="stylesheet" href=".seeweb/seeweb.css">
+    <!-- 切割标识 00000000 -->
+    <link rel="stylesheet" href=".seeweb/seeweb.css">
     <!-- 核心模块 -->
     <script src=".seeweb/choseList.js"></script>
     <script src=".seeweb/choseDiv.js"></script>
@@ -570,7 +572,7 @@ document.getElementById('eventBtn').addEventListener('click', function() {
     <!-- 初始化 -->
     <script src=".seeweb/init.js"></script>
     <script>
-        window.addEventListener('DOMContentLoaded', function() {
+        window.addEventListener('DOMContentLoaded', function () {
             console.log('🎨 SeeWeb Pro 加载中...');
             const seeWeb = SeeWebInit.init();
             if (seeWeb) {
@@ -579,6 +581,7 @@ document.getElementById('eventBtn').addEventListener('click', function() {
         });
     </script>
 
-<!-- 切割标识 00000000 -->
+    <!-- 切割标识 00000000 -->
+</body>
 
-
+</html>

@@ -52,6 +52,10 @@ class ChoseRect {
         this.lastMouseX = 0;
         this.lastMouseY = 0;
 
+        // 文档滚动缓存
+        this.scrollTop = 0;
+        this.scrollLeft = 0;
+
         // 添加CSS样式
         this._addStyles();
 
@@ -59,9 +63,8 @@ class ChoseRect {
         this._bindEvents();
     }
 
-    // 辅助方法：直接创建元素（不使用代理，避免被 suspendAll 移除）
     _createElement(tag, key) {
-        return document.createElement(tag);
+        return this.proxyFactory.createElement(tag, key);
     }
 
     // 添加CSS样式 - 样式已统一到seeweb.css文件中
@@ -77,6 +80,10 @@ class ChoseRect {
 
             // 只有左键点击才开始拖动
             if (e.button === 0) {
+                // 获取当前文档滚动距离
+                this.scrollTop = window.scrollY;
+                this.scrollLeft = window.scrollX;
+
                 this.isDragging = true;
                 this.startX = e.clientX;
                 this.startY = e.clientY;
@@ -113,14 +120,22 @@ class ChoseRect {
 
             // 如果正在拖动，更新选择框
             if (this.isDragging) {
+                // 获取当前文档滚动距离
+                const scrollTop = window.scrollY;
+                const scrollLeft = window.scrollX;
+                
+                // 计算选择框起始点的绝对位置
+                // this.startX = e.clientX + scrollLeft - this.scrollLeft;
+                const sta_startY = this.startY - scrollTop + this.scrollTop;
+
                 // 计算选择框的位置和大小
-                const currentX = e.clientX;
-                const currentY = e.clientY;
+                const currentX = e.clientX
+                const currentY = e.clientY
 
                 const left = Math.min(this.startX, currentX);
-                const top = Math.min(this.startY, currentY);
+                const top = Math.min(sta_startY, currentY);
                 const width = Math.abs(currentX - this.startX);
-                const height = Math.abs(currentY - this.startY);
+                const height = Math.abs(currentY - sta_startY);
 
                 // 更新选择框样式
                 this.selectionRect.style.left = `${left}px`;

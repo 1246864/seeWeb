@@ -66,7 +66,7 @@ class ChoseDiv {
 
     // 辅助方法：直接创建元素（不使用代理，避免被 suspendAll 移除）
     _createElement(tag, key) {
-        return document.createElement(tag);
+        return this.proxyFactory.createElement(tag, key);
     }
 
     // 添加CSS样式 - 样式已统一到seeweb.css文件中

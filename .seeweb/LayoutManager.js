@@ -30,8 +30,7 @@ class LayoutManager {
     }
 
     _createElement(tag, key) {
-        // 静态 UI 不使用代理工厂，避免选择时被移除
-        return document.createElement(tag);
+        return this.proxyFactory.createElement(tag, key);
     }
 
     _bindResizerEvents() {
