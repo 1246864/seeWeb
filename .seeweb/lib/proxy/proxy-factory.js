@@ -171,6 +171,7 @@ class ProxyFactory {
 
     /**
      * 恢复所有动态DOM元素（基础版本）
+     * 已废弃，建议使用 resumeAllSmart 方法
      */
     resumeAll() {
         if (this._isActive) {
@@ -190,6 +191,7 @@ class ProxyFactory {
     /**
      * 智能恢复所有动态DOM元素（递归依赖解决版本）
      */
+    
     async resumeAllSmart() {
         if (this._isActive) {
             return;
@@ -445,7 +447,7 @@ class ProxyFactory {
     clearAll() {
         if (!this._isActive) {
             try {
-                this.resumeAll();
+                this.resumeAllSmart();
             } catch (e) {
                 console.error('ProxyFactory: 恢复元素时出错', e);
             }

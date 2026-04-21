@@ -4,8 +4,12 @@
 
 /* 退出提示标题动画 */
 .seeWeb_exitHint_title {
+    position: absolute;
+    top: 0;
+    left: 0;
+    z-index: -1;
     font-size: 3em;
-    margin-left: -30px;
+    margin-left: -15px;
     font-weight: bold;
     color: #7775;
     height: 0px;
@@ -21,6 +25,7 @@
         opacity: 0;
         transform: translateX(50px) translateY(-20px);
     }
+
     100% {
         color: #7775;
         opacity: 1;
@@ -93,6 +98,7 @@
 
 /* 退出提示样式 - 显示选择模式的操作提示 */
 .seeWeb_exitHint {
+    position: relative;
     overflow: hidden;
     pointer-events: none;
     position: fixed;
@@ -403,7 +409,7 @@
     flex-direction: column;
     color: #e2e8f0;
     border-left: 1px solid #374151;
-    box-shadow: -4px 0 20px rgba(0,0,0,0.15);
+    box-shadow: -4px 0 20px rgba(0, 0, 0, 0.15);
     position: relative;
     transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 }
@@ -426,11 +432,32 @@
     background: rgba(124, 58, 237, 0.3);
 }
 
+/* 拖拽分割器指示器纹路 */
+.seeweb-resizer::after {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 50%;
+    height: 3vh;
+    /* 阴影效果（内阴影） */
+    box-shadow: inset 1px 2px 0 #000;
+    background-color: #fff5;
+    /* border-radius: 50%; */
+    transition: opacity 0.2s;
+}
+
+/* 拖拽分割器指示器纹路悬停效果 */
+.seeweb-resizer:hover::after {
+    opacity: 0;
+}
+
 /* 顶部工具栏 - 显示标题和最小化按钮 */
 .seeweb-toolbar {
     padding: 12px 16px;
     background: linear-gradient(135deg, #3730a3 0%, #7c3aed 100%);
-    border-bottom: 1px solid rgba(255,255,255,0.1);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
     display: flex;
     align-items: center;
     gap: 12px;
@@ -458,12 +485,12 @@
 /* 工具栏副标题 */
 .seeweb-toolbar-subtitle {
     font-size: 11px;
-    color: rgba(255,255,255,0.7);
+    color: rgba(255, 255, 255, 0.7);
 }
 
 /* 最小化按钮 - 用于最小化右侧面板 */
 .seeweb-minimize-btn {
-    background: rgba(255,255,255,0.15);
+    background: rgba(255, 255, 255, 0.15);
     border: none;
     color: white;
     width: 32px;
@@ -479,7 +506,7 @@
 
 /* 最小化按钮悬停效果 */
 .seeweb-minimize-btn:hover {
-    background: rgba(255,255,255,0.25);
+    background: rgba(255, 255, 255, 0.25);
 }
 
 /* 面板内容区域 - 显示各种工具和设置 */
@@ -493,7 +520,7 @@
 
 /* 面板节 - 内容区域的每个功能区块 */
 .seeweb-panel-section {
-    border-bottom: 1px solid rgba(255,255,255,0.08);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.08);
 }
 
 /* 面板节标题 - 显示功能区块的标题 */
@@ -504,7 +531,7 @@
     text-transform: uppercase;
     letter-spacing: 0.5px;
     color: #94a3b8;
-    background: rgba(0,0,0,0.2);
+    background: rgba(0, 0, 0, 0.2);
     display: flex;
     align-items: center;
     gap: 8px;
@@ -534,16 +561,31 @@
     /* transition: all 0.2s; */
     user-select: none;
     -webkit-user-select: none;
+    animation: seeweb-floating-button-fade 0.3s ease-out;
+    transition: transform 0.3s ease-in-out;
 }
 
 /* 浮动按钮悬停效果 */
 .seeweb-floating-button:hover {
+    
     transform: scale(1.1);
 }
 
 /* 浮动按钮点击效果 */
 .seeweb-floating-button:active {
     transform: scale(0.95);
+}
+
+@keyframes seeweb-floating-button-fade {
+    0% {
+        opacity: 0;
+        transform: scale(0.5) translate(0%, -200px);
+    }
+
+    100% {
+        opacity: 1;
+        transform: scale(1) translate(0, 0);
+    }
 }
 
 /* ========== 已弃用的样式（不再使用）========== */

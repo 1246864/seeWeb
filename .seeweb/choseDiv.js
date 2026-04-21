@@ -53,6 +53,8 @@ class ChoseDiv {
         this.lastMouseX = 0;
         this.lastMouseY = 0;
         this.currentElement = null; // 当前选中的元素
+        this.mouseStillTimer = null; // 鼠标静止检测定时器
+        this.mouseStillDelay = 100; // 鼠标静止延迟时间（毫秒）
 
         // 添加CSS样式
         this._addStyles();
@@ -104,6 +106,16 @@ class ChoseDiv {
 
             // 更新选择框
             this._updateSelectionBox(e.clientX, e.clientY);
+
+            // 鼠标移动时：设置触摸穿透，重置定时器
+            this.selectionBox.style.pointerEvents = 'none';
+            if (this.mouseStillTimer) {
+                clearTimeout(this.mouseStillTimer);
+            }
+            this.mouseStillTimer = setTimeout(() => {
+                // 鼠标静止一段时间后：取消触摸穿透
+                this.selectionBox.style.pointerEvents = 'auto';
+            }, this.mouseStillDelay);
         });
 
         // 按Ctrl键切换元素（父元素）
@@ -119,18 +131,18 @@ class ChoseDiv {
         // 点击页面（除了我们自己的 UI）时，选择当前元素
         document.addEventListener('click', (e) => {
             if (!this.isSelectionActive) return;
-            
+
             // 如果点击的是我们自己的 UI，忽略
-            if (e.target.closest('.seeWeb_choseDiv') || 
+            if (
                 e.target.closest('.seeWeb_exitHint') ||
                 e.target.closest('.seeWeb-chose-panel') ||
                 e.target.closest('.seeWeb-layout')) {
                 return;
             }
 
-            e.preventDefault();
-            e.stopPropagation();
-            this._selectCurrentElement();
+            e.preventDefault(); // 阻止默认的点击行为
+            e.stopPropagation(); // 阻止事件冒泡，确保点击事件只触发一次
+            this._selectCurrentElement(); // 选择当前元素
         });
 
         // 按Escape键禁用选择框
@@ -157,7 +169,7 @@ class ChoseDiv {
     // 更新选择框（根据鼠标位置）
     _updateSelectionBox(x, y) {
         let element = null;
-        
+
         // 先找到所有标记框，暂时隐藏它们
         const markers = document.querySelectorAll('.seeWeb_choseMarker');
         markers.forEach(marker => {
@@ -175,7 +187,7 @@ class ChoseDiv {
         if (!element) return;
 
         // 如果元素是我们自己的 UI，跳过
-        if (element.closest('.seeWeb_choseDiv') || 
+        if (element.closest('.seeWeb_choseDiv') ||
             element.closest('.seeWeb_exitHint') ||
             element.closest('.seeWeb-chose-panel') ||
             element.closest('.seeWeb-layout')) {
@@ -204,24 +216,24 @@ class ChoseDiv {
     // 选择父元素
     _selectParentElement() {
         if (!this.currentElement || !this.currentElement.parentElement) return;
-        
+
         const parent = this.currentElement.parentElement;
         if (parent && parent !== document.documentElement && parent !== document.body) {
             this.currentElement = parent;
             this.hoveredElementsCache = [parent];
-            
+
             // 更新选择框
             const rect = parent.getBoundingClientRect();
             const padding = Math.max(2, Math.min(rect.width, rect.height) / 40);
-            
+
             this.selectionBox.style.left = `${rect.left - padding}px`;
             this.selectionBox.style.top = `${rect.top - padding}px`;
             this.selectionBox.style.width = `${rect.width + padding * 2}px`;
             this.selectionBox.style.height = `${rect.height + padding * 2}px`;
             this.selectionBox.style.borderRadius = `${padding}px`;
-            
+
             this.tagNameDisplay.textContent = parent.tagName.toLowerCase();
-            
+
             console.log('选择父元素:', parent);
         }
     }
@@ -232,9 +244,9 @@ class ChoseDiv {
             console.warn('没有当前元素');
             return;
         }
-        
+
         console.log('点击选择元素:', this.currentElement);
-        
+
         if (this.choseList) {
             this.choseList.add(this.currentElement);
         }
@@ -266,18 +278,19 @@ class ChoseDiv {
     enable() {
         console.log('✅ choseDiv.enable() 被调用');
         console.log('this.selectionBox:', this.selectionBox);
-        
+
         // 重置状态
         this.currentElement = null;
         this.hoveredElementsCache = [];
-        
+
         // 进入选择模式，完全隐藏右侧面板，不显示浮动按钮
         if (this.layoutManager && this.layoutManager.hideForSelection) {
             this.layoutManager.hideForSelection();
         }
-        
+
         // 显示选择框，但先不设置固定位置，等鼠标移动
         this.selectionBox.style.display = 'block';
+        this.selectionBox.style.pointerEvents = 'none';
 
         // 检查鼠标是否靠近右上角
         const mouseX = this.lastMouseX || 0;
@@ -291,12 +304,18 @@ class ChoseDiv {
     // 禁用选择器
     disable() {
         console.log('❌ choseDiv.disable() 被调用');
-        
+
+        // 清除定时器
+        if (this.mouseStillTimer) {
+            clearTimeout(this.mouseStillTimer);
+            this.mouseStillTimer = null;
+        }
+
         // 退出选择模式，恢复右侧面板
         if (this.layoutManager && this.layoutManager.restoreAfterSelection) {
             this.layoutManager.restoreAfterSelection();
         }
-        
+
         this.selectionBox.style.display = 'none';
         this.exitHint.style.display = 'none';
         this.isSelectionActive = false;
@@ -304,7 +323,7 @@ class ChoseDiv {
         this.hoveredElementsCache = [];
         this.currentIndex = 0;
         this.currentElement = null; // 重置当前元素！
-        
+
         console.log('❌ choseDiv 禁用成功');
     }
 

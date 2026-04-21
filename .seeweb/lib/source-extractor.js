@@ -28,18 +28,25 @@ class SourceExtractor {
                 }
             }
 
-            // 2. 提取网页源代码
+            // 2. 禁用body样式
+            const originalBodyStyle = document.body.style.cssText;//获取原始body样式，用于恢复后使用
+            document.body.style.cssText = `
+            `;
+
+            // 3. 提取网页源代码
             let sourceCode = document.documentElement.outerHTML;
 
-            // 3. 重新激活UI（如果之前禁用了）
+            // 4. 重新激活UI（如果之前禁用了）
             if (proxyFactory && !proxyFactory.isActive()) {
-                proxyFactory.resumeAll();
+                proxyFactory.resumeAllSmart();
             }
 
-            // 4. 美化输出（如果启用）
+            // 5. 美化输出（如果启用）  
             if (prettyPrint) {
                 sourceCode = this._prettyPrint(sourceCode);
             }
+            // 6. 恢复原始body样式
+            document.body.style.cssText = originalBodyStyle;
 
             return sourceCode;
         } catch (error) {

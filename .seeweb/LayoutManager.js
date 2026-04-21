@@ -42,6 +42,7 @@ class LayoutManager {
             isResizing = true;
             startX = e.clientX;
             startWidth = this.rightPanel.offsetWidth;
+            document.body.style.transition = 'none';
             
             // 添加全局事件
             document.addEventListener('mousemove', onMouseMove);
@@ -70,6 +71,7 @@ class LayoutManager {
 
         const onMouseUp = () => {
             isResizing = false;
+            document.body.style.transition = 'width 0.3s cubic-bezier(0.4, 0, 0.2, 1), margin-right 0.3s cubic-bezier(0.4, 0, 0.2, 1)';
             document.removeEventListener('mousemove', onMouseMove);
             document.removeEventListener('mouseup', onMouseUp);
         };
@@ -186,7 +188,7 @@ class LayoutManager {
         }
 
         // 恢复 body 原始样式
-        document.body.style.width = this.originalBodyStyle.width || '';
+        document.body.style.width = this.originalBodyStyle.width || '100%';
         document.body.style.marginRight = this.originalBodyStyle.marginRight || '';
 
         // 面板滑出动画
@@ -262,7 +264,7 @@ class LayoutManager {
         }
         
         // 恢复 body 原始样式
-        document.body.style.width = this.originalBodyStyle.width || '';
+        document.body.style.width = this.originalBodyStyle.width || '100%';
         document.body.style.marginRight = this.originalBodyStyle.marginRight || '';
 
         // 面板滑出动画
