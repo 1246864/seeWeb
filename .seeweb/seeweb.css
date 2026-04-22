@@ -1,6 +1,4 @@
-/* SeeWeb 工具样式 - 统一命名空间前缀 seeWeb_ */
-
-/* ========== 核心选择功能样式（正在使用）========== */
+/* SeeWeb 工具样式 - Pro 版本 */
 
 /* 退出提示标题动画 */
 .seeWeb_exitHint_title {
@@ -12,20 +10,18 @@
     margin-left: -15px;
     font-weight: bold;
     color: #7775;
-    height: 0px;
+    height: 0;
     text-align: left;
     transform: translateX(0) translateY(-20px);
     animation: seeWeb_exitHintFadeIn 1s ease-in-out;
 }
 
-/* 退出提示标题淡入动画 */
 @keyframes seeWeb_exitHintFadeIn {
     0% {
         color: #fffa;
         opacity: 0;
         transform: translateX(50px) translateY(-20px);
     }
-
     100% {
         color: #7775;
         opacity: 1;
@@ -33,7 +29,6 @@
     }
 }
 
-/* 单选模式选择框样式 - 用于显示鼠标悬停元素的蓝色边框 */
 .seeWeb_choseDiv {
     position: fixed;
     border: 2px solid #3498db;
@@ -44,7 +39,6 @@
     display: none;
 }
 
-/* 单选模式标签名显示 - 显示选中元素的标签名 */
 .seeWeb_choseDiv_name {
     position: absolute;
     top: -26px;
@@ -59,7 +53,6 @@
     white-space: nowrap;
 }
 
-/* 扩选模式选择框样式 - 用于显示拖拽选择的绿色边框 */
 .seeWeb_choseRect {
     position: fixed;
     border: 2px solid #2ecc71;
@@ -69,7 +62,6 @@
     display: none;
 }
 
-/* 扩选模式遮罩 - 用于捕获鼠标事件进行拖拽选择 */
 .seeWeb_choseRectMask {
     position: fixed;
     top: 0;
@@ -82,7 +74,6 @@
     display: none;
 }
 
-/* 选择标记样式 - 用于显示已选中元素的红色边框 */
 .seeWeb_choseMarker {
     position: fixed;
     border: 2px solid #e74c3c;
@@ -96,7 +87,6 @@
     border-radius: 0;
 }
 
-/* 退出提示样式 - 显示选择模式的操作提示 */
 .seeWeb_exitHint {
     position: relative;
     overflow: hidden;
@@ -116,9 +106,387 @@
     text-align: right;
 }
 
-/* ========== 选择面板样式（正在使用）========== */
+/* 布局样式 */
+.seeweb-layout {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    height: 0;
+    display: flex;
+    background: transparent;
+    z-index: 9999999;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+}
 
-/* 选择面板容器 */
+.seeweb-render-area {
+    flex: 1;
+    min-width: 0;
+    height: 0;
+    background: transparent;
+    position: relative;
+}
+
+.seeweb-right-panel {
+    width: 360px;
+    min-width: 280px;
+    max-width: 600px;
+    height: 100vh;
+    background: #27293d;
+    display: flex;
+    flex-direction: column;
+    color: #e2e8f0;
+    border-left: 1px solid #374151;
+    box-shadow: -4px 0 20px rgba(0, 0, 0, 0.25);
+    position: relative;
+    transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.seeweb-resizer {
+    width: 6px;
+    cursor: col-resize;
+    background: transparent;
+    position: absolute;
+    left: 0;
+    top: 0;
+    bottom: 0;
+    z-index: 1;
+    transition: background 0.2s;
+}
+
+.seeweb-resizer:hover {
+    background: rgba(124, 58, 237, 0.3);
+}
+
+.seeweb-resizer::after {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 50%;
+    height: 3vh;
+    box-shadow: inset 1px 2px 0 #000;
+    background-color: #fff5;
+    transition: opacity 0.2s;
+}
+
+.seeweb-resizer:hover::after {
+    opacity: 0;
+}
+
+.seeweb-toolbar {
+    padding: 12px 16px;
+    background: linear-gradient(135deg, #3730a3 0%, #7c3aed 100%);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    flex-shrink: 0;
+    justify-content: space-between;
+}
+
+.seeweb-toolbar-title-wrapper {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+}
+
+.seeweb-toolbar-title {
+    font-size: 18px;
+    font-weight: 700;
+    color: white;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.seeweb-toolbar-back-btn {
+    padding: 6px 14px;
+    background: rgba(255, 255, 255, 0.15);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    border-radius: 6px;
+    color: white;
+    font-size: 14px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.seeweb-toolbar-back-btn:hover {
+    background: rgba(255, 255, 255, 0.25);
+}
+
+.seeweb-more-btn {
+    padding: 6px 14px;
+    background: rgba(255, 255, 255, 0.15);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    border-radius: 6px;
+    color: white;
+    font-size: 14px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.seeweb-more-btn:hover {
+    background: rgba(255, 255, 255, 0.25);
+}
+
+.seeweb-minimize-btn {
+    background: rgba(255, 255, 255, 0.15);
+    border: none;
+    color: white;
+    width: 32px;
+    height: 32px;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 16px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.2s;
+}
+
+.seeweb-minimize-btn:hover {
+    background: rgba(255, 255, 255, 0.25);
+}
+
+.seeweb-panel-content {
+    flex: 1;
+    overflow: hidden;
+    position: relative;
+}
+
+/* 主界面内容容器 */
+.seeweb-main-content {
+    width: 100%;
+    height: 100%;
+    overflow-y: auto;
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+    position: absolute;
+    top: 0;
+    left: 0;
+}
+
+.seeweb-main-content::-webkit-scrollbar {
+    display: none;
+}
+
+/* 更多功能容器 */
+.seeweb-more-content {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: #27293d;
+    z-index: 10;
+    transform: translateX(100%);
+    overflow-y: auto;
+    display: flex;
+    flex-direction: column;
+}
+
+/* 更多功能头部 */
+.seeweb-more-header {
+    display: flex;
+    align-items: center;
+    padding: 12px 16px;
+    background: linear-gradient(135deg, #3730a3 0%, #7c3aed 100%);
+    gap: 12px;
+    flex-shrink: 0;
+}
+
+.seeweb-more-back-btn {
+    padding: 8px 14px;
+    background: rgba(255, 255, 255, 0.15);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    border-radius: 6px;
+    color: white;
+    font-size: 14px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.seeweb-more-back-btn:hover {
+    background: rgba(255, 255, 255, 0.25);
+}
+
+.seeweb-more-title {
+    flex: 1;
+    text-align: center;
+    font-size: 18px;
+    font-weight: 700;
+    color: white;
+}
+
+/* 功能列表 */
+.seeweb-more-list {
+    display: flex;
+    flex-direction: column;
+    padding: 8px;
+    gap: 4px;
+    flex: 1;
+}
+
+.seeweb-more-item {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 14px 16px;
+    background: rgba(255, 255, 255, 0.02);
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.seeweb-more-item:hover {
+    background: rgba(255, 255, 255, 0.08);
+}
+
+.seeweb-more-item-icon {
+    font-size: 28px;
+    width: 40px;
+    text-align: center;
+}
+
+.seeweb-more-item-text {
+    flex: 1;
+}
+
+.seeweb-more-item-name {
+    font-size: 16px;
+    font-weight: 600;
+    color: #e2e8f0;
+}
+
+.seeweb-more-item-desc {
+    font-size: 13px;
+    color: #94a3b8;
+}
+
+.seeweb-more-item-arrow {
+    font-size: 16px;
+    color: #94a3b8;
+}
+
+/* 视口容器 */
+.seeweb-viewport-container {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+}
+
+/* 滑入动画（从右边） */
+.seeweb-slide-in {
+    animation: seewebSlideIn 0.3s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+}
+
+@keyframes seewebSlideIn {
+    from {
+        transform: translateX(100%);
+    }
+    to {
+        transform: translateX(0);
+    }
+}
+
+/* 滑出动画（到右边） */
+.seeweb-slide-out {
+    animation: seewebSlideOut 0.3s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+}
+
+@keyframes seewebSlideOut {
+    from {
+        transform: translateX(0);
+    }
+    to {
+        transform: translateX(100%);
+    }
+}
+
+/* 滑入动画（从左边） */
+.seeweb-slide-in-left {
+    animation: seewebSlideInLeft 0.3s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+}
+
+@keyframes seewebSlideInLeft {
+    from {
+        transform: translateX(-100%);
+    }
+    to {
+        transform: translateX(0);
+    }
+}
+
+/* 滑出动画（到左边） */
+.seeweb-slide-out-left {
+    animation: seewebSlideOutLeft 0.3s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+}
+
+@keyframes seewebSlideOutLeft {
+    from {
+        transform: translateX(0);
+    }
+    to {
+        transform: translateX(-100%);
+    }
+}
+
+.seeweb-panel-section {
+    border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.seeweb-panel-section-header {
+    padding: 14px 18px;
+    font-size: 12px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    color: #94a3b8;
+    background: rgba(0, 0, 0, 0.2);
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.seeweb-panel-section-content {
+    padding: 16px 18px;
+}
+
+.seeweb-floating-button {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    width: 60px;
+    height: 60px;
+    background: linear-gradient(135deg, #3730a3 0%, #7c3aed 100%);
+    border-radius: 50%;
+    display: none;
+    align-items: center;
+    justify-content: center;
+    font-size: 28px;
+    cursor: pointer;
+    z-index: 9999998;
+    box-shadow: 0 4px 20px rgba(124, 58, 237, 0.4);
+    user-select: none;
+    -webkit-user-select: none;
+    transition: transform 0.3s ease-in-out;
+}
+
+.seeweb-floating-button:hover {
+    transform: scale(1.1);
+}
+
+.seeweb-floating-button:active {
+    transform: scale(0.95);
+}
+
+/* 选择面板样式 */
 .seeweb-chose-panel-container {
     width: 100%;
     display: flex;
@@ -126,14 +494,12 @@
     gap: 0;
 }
 
-/* 标签切换容器 */
 .seeweb-chose-panel-tabs {
     display: flex;
     background: rgba(0, 0, 0, 0.2);
     border-bottom: 1px solid rgba(255, 255, 255, 0.08);
 }
 
-/* 标签按钮 */
 .seeweb-chose-panel-tab {
     flex: 1;
     padding: 12px 16px;
@@ -158,13 +524,11 @@
     border-bottom-color: #a855f7;
 }
 
-/* 创建功能内容区 */
 .seeweb-chose-panel-content-create {
     display: none;
     padding: 16px;
 }
 
-/* 选择功能内容区 */
 .seeweb-chose-panel-content-select {
     display: flex;
     flex-direction: column;
@@ -172,7 +536,6 @@
     padding: 16px;
 }
 
-/* 内容区占位符 */
 .seeweb-chose-panel-content-placeholder {
     font-size: 14px;
     color: #64748b;
@@ -185,7 +548,6 @@
     margin-bottom: 12px;
 }
 
-/* 分区标题 */
 .seeweb-chose-panel-section-title {
     font-size: 11px;
     font-weight: 700;
@@ -195,13 +557,11 @@
     letter-spacing: 0.5px;
 }
 
-/* 分区按钮容器 */
 .seeweb-chose-panel-section-buttons {
     display: flex;
     gap: 10px;
 }
 
-/* 通用按钮样式 */
 .seeweb-chose-panel-btn {
     flex: 1;
     padding: 10px 14px;
@@ -213,7 +573,6 @@
     transition: all 0.2s;
 }
 
-/* 单选按钮 */
 .seeweb-chose-panel-btn-single {
     background: rgba(168, 85, 247, 0.15);
     border-color: rgba(168, 85, 247, 0.3);
@@ -225,7 +584,6 @@
     border-color: rgba(168, 85, 247, 0.4);
 }
 
-/* 扩选按钮 */
 .seeweb-chose-panel-btn-rect {
     background: rgba(16, 185, 129, 0.1);
     border-color: rgba(16, 185, 129, 0.3);
@@ -237,7 +595,6 @@
     border-color: rgba(16, 185, 129, 0.4);
 }
 
-/* 撤销按钮 */
 .seeweb-chose-panel-btn-undo {
     background: rgba(59, 130, 246, 0.1);
     border-color: rgba(59, 130, 246, 0.2);
@@ -249,7 +606,6 @@
     border-color: rgba(59, 130, 246, 0.3);
 }
 
-/* 清除按钮 */
 .seeweb-chose-panel-btn-clear {
     background: rgba(239, 68, 68, 0.1);
     border-color: rgba(239, 68, 68, 0.2);
@@ -261,14 +617,12 @@
     border-color: rgba(239, 68, 68, 0.3);
 }
 
-/* 提示词区域容器 */
 .seeweb-chose-panel-prompt-wrapper {
     display: flex;
     flex-direction: column;
     gap: 10px;
 }
 
-/* 提示词文本域 */
 .seeweb-chose-panel-prompt-textarea {
     width: 100%;
     min-height: 80px;
@@ -280,13 +634,13 @@
     font-size: 13px;
     resize: vertical;
     outline: none;
+    box-sizing: border-box;
 }
 
 .seeweb-chose-panel-prompt-textarea:focus {
     border-color: rgba(139, 92, 246, 0.5);
 }
 
-/* 发送提示词按钮 */
 .seeweb-chose-panel-prompt-btn {
     width: 100%;
     padding: 12px 14px;
@@ -309,7 +663,6 @@
     transform: translateY(0);
 }
 
-/* 选中元素列表容器 */
 .seeweb-chose-panel-list-container {
     background: rgba(0, 0, 0, 0.2);
     border: 1px solid rgba(255, 255, 255, 0.08);
@@ -319,7 +672,6 @@
     padding: 8px;
 }
 
-/* 空列表提示 */
 .seeweb-chose-panel-list-empty {
     color: #64748b;
     font-size: 12px;
@@ -327,7 +679,6 @@
     padding: 20px;
 }
 
-/* 列表项 */
 .seeweb-chose-panel-list-item {
     display: flex;
     align-items: center;
@@ -342,24 +693,20 @@
     margin-bottom: 0;
 }
 
-/* 列表项标签 */
 .seeweb-chose-panel-list-item-tag {
     font-family: monospace;
     font-size: 12px;
     color: #e2e8f0;
 }
 
-/* 标签前缀 */
 .seeweb-chose-panel-list-item-tag-prefix {
     color: #8b5cf6;
 }
 
-/* 标签后缀 */
 .seeweb-chose-panel-list-item-tag-suffix {
     color: #64748b;
 }
 
-/* 删除按钮 */
 .seeweb-chose-panel-list-item-remove {
     background: rgba(239, 68, 68, 0.2);
     border: none;
@@ -376,266 +723,157 @@
     background: rgba(239, 68, 68, 0.3);
 }
 
-/* ========== 布局管理器样式（正在使用）========== */
-
-/* 布局包装器 - 整体布局容器 */
-.seeweb-layout {
-    position: fixed;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    height: 0;
-    display: flex;
-    background: transparent;
-    z-index: 9999999;
-    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-}
-
-/* 渲染区域 - 左侧网页显示区域 */
-.seeweb-render-area {
-    flex: 1;
-    min-width: 0;
-    height: 0;
-    background: transparent;
-    position: relative;
-}
-
-/* 右侧面板 - 工具控制面板 */
-.seeweb-right-panel {
-    width: 360px;
-    min-width: 280px;
-    max-width: 600px;
-    height: 100vh;
-    background: #27293d;
+/* 视口控制器样式 */
+.seeweb-viewport-controller {
     display: flex;
     flex-direction: column;
-    color: #e2e8f0;
-    border-left: 1px solid #374151;
-    box-shadow: -4px 0 20px rgba(0, 0, 0, 0.15);
-    position: relative;
-    transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    width: 100%;
+    height: 100%;
+    background: #27293d;
 }
 
-/* 拖拽分割器 - 用于调整右侧面板宽度 */
-.seeweb-resizer {
-    width: 6px;
-    cursor: col-resize;
-    background: transparent;
-    position: absolute;
-    left: 0;
-    top: 0;
-    bottom: 0;
-    z-index: 1;
-    transition: background 0.2s;
-}
-
-/* 拖拽分割器悬停效果 */
-.seeweb-resizer:hover {
-    background: rgba(124, 58, 237, 0.3);
-}
-
-/* 拖拽分割器指示器纹路 */
-.seeweb-resizer::after {
-    content: '';
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    width: 50%;
-    height: 3vh;
-    /* 阴影效果（内阴影） */
-    box-shadow: inset 1px 2px 0 #000;
-    background-color: #fff5;
-    /* border-radius: 50%; */
-    transition: opacity 0.2s;
-}
-
-/* 拖拽分割器指示器纹路悬停效果 */
-.seeweb-resizer:hover::after {
-    opacity: 0;
-}
-
-/* 顶部工具栏 - 显示标题和最小化按钮 */
-.seeweb-toolbar {
+.seeweb-viewport-header {
+    display: flex;
+    align-items: center;
     padding: 12px 16px;
     background: linear-gradient(135deg, #3730a3 0%, #7c3aed 100%);
-    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-    display: flex;
-    align-items: center;
     gap: 12px;
     flex-shrink: 0;
-    justify-content: space-between;
 }
 
-/* 工具栏标题包装器 - 包含标题和副标题 */
-.seeweb-toolbar-title-wrapper {
-    display: flex;
-    flex-direction: column;
-    gap: 2px;
-}
-
-/* 工具栏主标题 */
-.seeweb-toolbar-title {
-    font-size: 18px;
-    font-weight: 700;
-    color: white;
-    display: flex;
-    align-items: center;
-    gap: 10px;
-}
-
-/* 工具栏副标题 */
-.seeweb-toolbar-subtitle {
-    font-size: 11px;
-    color: rgba(255, 255, 255, 0.7);
-}
-
-/* 最小化按钮 - 用于最小化右侧面板 */
-.seeweb-minimize-btn {
+.seeweb-viewport-back-btn {
+    padding: 8px 14px;
     background: rgba(255, 255, 255, 0.15);
-    border: none;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    border-radius: 6px;
     color: white;
-    width: 32px;
-    height: 32px;
-    border-radius: 8px;
+    font-size: 14px;
     cursor: pointer;
-    font-size: 16px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    transition: all 0.2s;
+    transition: all 0.2s ease;
 }
 
-/* 最小化按钮悬停效果 */
-.seeweb-minimize-btn:hover {
+.seeweb-viewport-back-btn:hover {
     background: rgba(255, 255, 255, 0.25);
 }
 
-/* 面板内容区域 - 显示各种工具和设置 */
-.seeweb-panel-content {
+.seeweb-viewport-title {
     flex: 1;
-    overflow-y: auto;
-    scrollbar-width: none;
-    -ms-overflow-style: none;
-    padding: 0;
-}
-
-/* 面板节 - 内容区域的每个功能区块 */
-.seeweb-panel-section {
-    border-bottom: 1px solid rgba(255, 255, 255, 0.08);
-}
-
-/* 面板节标题 - 显示功能区块的标题 */
-.seeweb-panel-section-header {
-    padding: 14px 18px;
-    font-size: 12px;
+    text-align: center;
+    font-size: 18px;
     font-weight: 700;
-    text-transform: uppercase;
-    letter-spacing: 0.5px;
-    color: #94a3b8;
-    background: rgba(0, 0, 0, 0.2);
+    color: white;
+}
+
+.seeweb-viewport-content {
+    flex: 1;
     display: flex;
-    align-items: center;
+    flex-direction: column;
+    overflow-y: auto;
+}
+
+.seeweb-viewport-desc {
+    padding: 16px;
+    color: #94a3b8;
+    font-size: 13px;
+}
+
+.seeweb-viewport-presets {
+    display: flex;
+    flex-wrap: wrap;
     gap: 8px;
+    padding: 0 16px;
 }
 
-/* 面板节内容 - 功能区块的具体内容 */
-.seeweb-panel-section-content {
-    padding: 16px 18px;
-}
-
-/* 浮动按钮 - 最小化后显示的圆形恢复按钮 */
-.seeweb-floating-button {
-    position: fixed;
-    top: 20px;
-    right: 20px;
-    width: 60px;
-    height: 60px;
-    background: linear-gradient(135deg, #3730a3 0%, #7c3aed 100%);
-    border-radius: 50%;
-    display: none;
+.seeweb-viewport-btn {
+    display: flex;
+    flex-direction: column;
     align-items: center;
     justify-content: center;
-    font-size: 28px;
+    gap: 2px;
+    padding: 8px 12px;
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 8px;
+    color: #94a3b8;
+    font-size: 11px;
     cursor: pointer;
-    z-index: 9999998;
-    box-shadow: 0 4px 20px rgba(124, 58, 237, 0.4);
-    /* transition: all 0.2s; */
-    user-select: none;
-    -webkit-user-select: none;
-    animation: seeweb-floating-button-fade 0.3s ease-out;
-    transition: transform 0.3s ease-in-out;
+    transition: all 0.2s ease;
+    min-width: 70px;
 }
 
-/* 浮动按钮悬停效果 */
-.seeweb-floating-button:hover {
-    
-    transform: scale(1.1);
+.seeweb-viewport-btn .icon {
+    font-size: 16px;
+    line-height: 1;
 }
 
-/* 浮动按钮点击效果 */
-.seeweb-floating-button:active {
+.seeweb-viewport-btn .name {
+    font-size: 10px;
+    font-weight: 500;
+    white-space: nowrap;
+}
+
+.seeweb-viewport-btn:hover {
+    background: rgba(255, 255, 255, 0.1);
+    border-color: rgba(124, 58, 237, 0.4);
+    color: #e2e8f0;
+}
+
+.seeweb-viewport-btn.active {
+    background: rgba(124, 58, 237, 0.3);
+    border-color: rgba(124, 58, 237, 0.8);
+    color: #a78bfa;
+    box-shadow: 0 0 10px rgba(124, 58, 237, 0.3);
+}
+
+.seeweb-viewport-btn:active {
     transform: scale(0.95);
 }
 
-@keyframes seeweb-floating-button-fade {
-    0% {
-        opacity: 0;
-        transform: scale(0.5) translate(0%, -200px);
-    }
-
-    100% {
-        opacity: 1;
-        transform: scale(1) translate(0, 0);
-    }
+.seeweb-viewport-custom {
+    display: flex;
+    gap: 8px;
+    padding: 16px;
 }
 
-/* ========== 已弃用的样式（不再使用）========== */
+.seeweb-viewport-input {
+    flex: 1;
+    padding: 8px 12px;
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 6px;
+    color: #e2e8f0;
+    font-size: 14px;
+    outline: none;
+}
 
-/*
- * 以下样式已弃用，因为对应的 UI 组件已被删除：
- * - choseUI.js（旧的选择模式 UI）
- * - promptDialog.js（旧的提示词对话框）
- * - lib/ui-manager/（旧的 UI 管理器）
- */
+.seeweb-viewport-input:focus {
+    border-color: rgba(124, 58, 237, 0.5);
+}
 
-/* ---- 旧选择模式UI样式（choseUI.js 已删除）---- */
-/*
-.seeWeb_choseUI { 旧的选择模式 UI 容器 }
-.seeWeb_choseUI_header { 旧的选择模式 UI 头部 }
-.seeWeb_choseUI_minimizeBtn { 旧的选择模式 UI 最小化按钮 }
-.seeWeb_choseUI_minimized { 旧的选择模式 UI 最小化状态 }
-.seeWeb_choseUI_icon { 旧的选择模式 UI 图标 }
-.seeWeb_choseUI_title { 旧的选择模式 UI 标题 }
-.seeWeb_choseUI_section { 旧的选择模式 UI 区块 }
-.seeWeb_choseUI_label { 旧的选择模式 UI 标签 }
-.seeWeb_choseUI_modeButtons { 旧的选择模式 UI 模式按钮容器 }
-.seeWeb_choseUI_actionButtons { 旧的选择模式 UI 操作按钮容器 }
-.seeWeb_choseUI_tabs { 旧的选择模式 UI 标签页 }
-.seeWeb_choseUI_tab { 旧的选择模式 UI 标签 }
-.seeWeb_choseUI_tab_active { 旧的选择模式 UI 激活标签 }
-.seeWeb_choseUI_tabContent { 旧的选择模式 UI 标签内容 }
-.seeWeb_choseUI_createButtons { 旧的选择模式 UI 创建按钮容器 }
-.seeWeb_choseUIBtn { 旧的选择模式 UI 通用按钮 }
-.seeWeb_choseUIBtn_icon { 旧的选择模式 UI 按钮图标 }
-.seeWeb_choseUIBtn_primary { 旧的选择模式 UI 主按钮 }
-.seeWeb_choseUIBtn_secondary { 旧的选择模式 UI 次要按钮 }
-*/
+.seeweb-viewport-apply-btn {
+    padding: 8px 20px;
+    background: rgba(124, 58, 237, 0.3);
+    border: 1px solid rgba(124, 58, 237, 0.6);
+    border-radius: 6px;
+    color: #a78bfa;
+    font-size: 14px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
 
-/* ---- 旧提示词对话框样式（promptDialog.js 已删除）---- */
-/*
-.seeWeb_promptDialog { 旧的提示词对话框容器 }
-.seeWeb_promptDialog_header { 旧的提示词对话框头部 }
-.seeWeb_promptDialog_title { 旧的提示词对话框标题 }
-.seeWeb_promptDialog_close { 旧的提示词对话框关闭按钮 }
-.seeWeb_promptDialog_body { 旧的提示词对话框内容 }
-.seeWeb_promptDialog_elementInfo { 旧的提示词对话框元素信息 }
-.seeWeb_promptDialog_textareaWrapper { 旧的提示词对话框文本域包装器 }
-.seeWeb_promptDialog_label { 旧的提示词对话框标签 }
-.seeWeb_promptDialog_textarea { 旧的提示词对话框文本域 }
-.seeWeb_promptDialog_footer { 旧的提示词对话框底部 }
-.seeWeb_promptDialog_btn { 旧的提示词对话框按钮 }
-.seeWeb_promptDialog_btnCancel { 旧的提示词对话框取消按钮 }
-.seeWeb_promptDialog_btnConfirm { 旧的提示词对话框确认按钮 }
-*/
+.seeweb-viewport-apply-btn:hover {
+    background: rgba(124, 58, 237, 0.4);
+}
+
+.seeweb-viewport-current {
+    padding: 12px 16px;
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
+    text-align: center;
+    color: #94a3b8;
+    font-size: 14px;
+}
+
+.seeweb-viewport-width {
+    color: #a78bfa;
+    font-weight: 600;
+}

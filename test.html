@@ -17,27 +17,24 @@
     <script src=".seeweb/choseDiv.js"></script>
     <script src=".seeweb/choseRect.js"></script>
     <script src=".seeweb/choseManager.js"></script>
-    <script src=".seeweb/choseUI.js"></script>
     <script src=".seeweb/lib/proxy/dom-proxy.js"></script>
     <script src=".seeweb/lib/proxy/proxy-factory.js"></script>
     <script src=".seeweb/lib/proxy/index.js"></script>
-    <script src=".seeweb/lib/ui-manager/ui-manager.js"></script>
-    <script src=".seeweb/lib/ui-manager/index.js"></script>
-    <script src=".seeweb/lib/source-extractor.js"></script>
-    <script src=".seeweb/promptDialog.js"></script>
+    <!-- 🎨 新架构模块 -->
+    <script src=".seeweb/ViewportController.js"></script>
+    <script src=".seeweb/LayoutManager.js"></script>
+    <script src=".seeweb/ChosePanel.js"></script>
     <script src=".seeweb/init.js"></script>
     <script>
         // 页面加载完成后初始化 SeeWeb
         window.addEventListener('DOMContentLoaded', function() {
-            console.log('初始化 SeeWeb...');
+            console.log('🎨 SeeWeb Pro 加载中...');
             const seeWeb = SeeWebInit.init();
             if (seeWeb) {
-                console.log('SeeWeb 初始化成功！');
+                console.log('✅ 初始化成功！');
                 console.log('代理工厂状态:', seeWeb.proxyFactory.isActive() ? '已激活' : '已禁用');
-                // 显示选择模式UI
-                seeWeb.choseUI.show();
             } else {
-                console.error('SeeWeb 初始化失败！');
+                console.error('💥 SeeWeb 初始化失败！');
             }
         });
 
@@ -52,21 +49,17 @@
                     console.log('  - proxyFactory.toggle() 切换状态');
                     console.log('  - proxyFactory.isActive() 检查状态');
                 }
-                if (window.SourceExtractor) {
-                    console.log('\n源代码提取工具已可用，可以通过 window.SourceExtractor 访问');
+                if (window.layoutManager) {
+                    console.log('\n布局管理器已可用，可以通过 window.layoutManager 访问');
                     console.log('常用方法:');
-                    console.log('  - SourceExtractor.extract() 提取源代码');
-                    console.log('  - SourceExtractor.extractAndCopy() 提取并复制到剪贴板');
-                    console.log('  - SourceExtractor.extractAndDownload() 提取并下载为文件');
+                    console.log('  - layoutManager.minimize() 最小化');
+                    console.log('  - layoutManager.restoreFromMinimized() 从最小化恢复');
+                    console.log('  - layoutManager.showSecondaryPanel() 打开二级面板');
+                    console.log('  - layoutManager.showMainPanel() 返回主面板');
+                    console.log('  - layoutManager.setSimulatedViewport(width) 设置模拟视口');
                 }
-                if (window.uiManager) {
-                    console.log('\nUI 管理器已可用，可以通过 window.uiManager 访问');
-                    console.log('常用方法:');
-                    console.log('  - uiManager.hideAll() 一键隐藏所有窗口 ⭐');
-                    console.log('  - uiManager.show(\'chose-ui\') 显示选择器面板');
-                    console.log('  - uiManager.show(\'prompt-dialog\') 显示提示词窗口');
-                    console.log('  - uiManager.toggle(\'chose-ui\') 切换选择器面板');
-                    console.log('  - uiManager.getAll() 获取所有注册的窗口');
+                if (window.viewportController) {
+                    console.log('\n视口控制器已可用，可以通过 window.viewportController 访问');
                 }
             }, 100);
         });

@@ -25,10 +25,8 @@ class LayoutManager {
         this.simulatedViewport = null;
         this.originalBodyTransform = null;
         this.resizeObserver = null;
-        this.isUpdatingViewport = false; // 防止 ResizeObserver 循环触发
-        this.viewportUpdateTimeout = null; // 防抖定时器
         
-        this.currentMode = 'main'; // 'main', 'more' 或 'viewport'
+        this.currentMode = 'main'; // 'main' 或 'secondary'
 
         this._createLayout();
     }
@@ -72,27 +70,15 @@ class LayoutManager {
 
             this.panelWidth = newWidth;
             this.rightPanel.style.width = `${newWidth}px`;
-            
-            // 如果没有模拟视口，才使用基础模式
-            if (!this.simulatedViewport) {
-                document.body.style.width = `calc(100% - ${newWidth}px)`;
-                document.body.style.marginRight = `${newWidth}px`;
-            } else {
-                // 在视口模式下，防抖重新计算
-                this._debounceRecalculateViewport();
-            }
+            document.body.style.width = `calc(100% - ${newWidth}px)`;
+            document.body.style.marginRight = `${newWidth}px`;
         };
 
         const onMouseUp = () => {
             isResizing = false;
-            document.body.style.transition = 'width 0.3s cubic-bezier(0.4, 0, 0.2, 1), margin-right 0.3s cubic-bezier(0.4, 0, 0.2, 1), transform 0.3s ease';
+            document.body.style.transition = 'width 0.3s cubic-bezier(0.4, 0, 0.2, 1), margin-right 0.3s cubic-bezier(0.4, 0, 0.2, 1)';
             document.removeEventListener('mousemove', onMouseMove);
             document.removeEventListener('mouseup', onMouseUp);
-            
-            // 拖拽结束后确保最终计算一次
-            if (this.simulatedViewport) {
-                this._recalculateViewportScale();
-            }
         };
     }
 
@@ -105,7 +91,7 @@ class LayoutManager {
         this.renderArea = this._createElement('div', 'render-area');
         this.renderArea.className = 'seeweb-render-area';
 
-        // 拖拽分割线
+        // 拖拽分割器
         this.resizer = this._createElement('div', 'resizer');
         this.resizer.className = 'seeweb-resizer';
         this._bindResizerEvents();
@@ -120,29 +106,20 @@ class LayoutManager {
         this.toolbar = this._createElement('div', 'top-toolbar');
         this.toolbar.className = 'seeweb-toolbar';
 
-        // 返回按钮
-        const backBtn = this._createElement('button', 'toolbar-back-btn');
-        backBtn.className = 'seeweb-toolbar-back-btn';
-        backBtn.innerHTML = '← 返回';
-        backBtn.style.display = 'none';
-        backBtn.addEventListener('click', () => this._handleBackClick());
-        this.toolbar.appendChild(backBtn);
-
-        // 标题
         const titleWrapper = this._createElement('div', 'toolbar-title-wrapper');
         titleWrapper.className = 'seeweb-toolbar-title-wrapper';
-        this.toolbarTitle = this._createElement('div', 'toolbar-title');
-        this.toolbarTitle.className = 'seeweb-toolbar-title';
-        this.toolbarTitle.innerHTML = '<span style="font-size: 24px;">🎨</span> SeeWeb Pro';
-        titleWrapper.appendChild(this.toolbarTitle);
+        titleWrapper.innerHTML = `
+            <div class="seeweb-toolbar-title">
+                <span style="font-size: 24px;">🎨</span> SeeWeb Pro
+            </div>
+        `;
         this.toolbar.appendChild(titleWrapper);
 
-        // 更多按钮
-        const moreBtn = this._createElement('button', 'more-btn');
-        moreBtn.className = 'seeweb-more-btn';
-        moreBtn.innerHTML = '更多';
-        moreBtn.addEventListener('click', () => this.showMorePanel());
-        this.toolbar.appendChild(moreBtn);
+        const viewportBtn = this._createElement('button', 'viewport-toggle-btn');
+        viewportBtn.className = 'seeweb-viewport-toggle-btn';
+        viewportBtn.innerHTML = '📱';
+        viewportBtn.addEventListener('click', () => this.showSecondaryPanel());
+        this.toolbar.appendChild(viewportBtn);
 
         this.minimizeBtn = this._createElement('button', 'minimize-btn');
         this.minimizeBtn.className = 'seeweb-minimize-btn';
@@ -150,7 +127,7 @@ class LayoutManager {
         this.minimizeBtn.addEventListener('click', () => this.minimize());
         this.toolbar.appendChild(this.minimizeBtn);
 
-        // 面板内容区
+        // 面板内容区 - 包含主界面和二级界面的容器
         this.panelContent = this._createElement('div', 'panel-content');
         this.panelContent.className = 'seeweb-panel-content';
 
@@ -159,11 +136,10 @@ class LayoutManager {
         this.mainContent.className = 'seeweb-main-content';
         this.panelContent.appendChild(this.mainContent);
 
-        // 更多功能容器
-        this.moreContent = this._createElement('div', 'more-content');
-        this.moreContent.className = 'seeweb-more-content';
-        this._createMorePanel();
-        this.panelContent.appendChild(this.moreContent);
+        // 二级界面内容容器
+        this.secondaryContent = this._createElement('div', 'secondary-content');
+        this.secondaryContent.className = 'seeweb-secondary-content';
+        this.panelContent.appendChild(this.secondaryContent);
 
         // 组装
         this.rightPanel.appendChild(this.toolbar);
@@ -193,34 +169,6 @@ class LayoutManager {
         });
     }
 
-    _createMorePanel() {
-        // 功能列表
-        const list = this._createElement('div', 'more-list');
-        list.className = 'seeweb-more-list';
-        
-        // 视口调整功能
-        const viewportItem = this._createElement('div', 'more-item');
-        viewportItem.className = 'seeweb-more-item';
-        viewportItem.innerHTML = `
-            <div class="seeweb-more-item-icon">📱</div>
-            <div class="seeweb-more-item-text">
-                <div class="seeweb-more-item-name">视口调整</div>
-                <div class="seeweb-more-item-desc">调整渲染网页的尺寸</div>
-            </div>
-            <div class="seeweb-more-item-arrow">→</div>
-        `;
-        viewportItem.addEventListener('click', () => this.showViewportPanel());
-        list.appendChild(viewportItem);
-
-        this.moreContent.appendChild(list);
-
-        // 视口调整容器（隐藏初始状态）
-        this.viewportContainer = this._createElement('div', 'viewport-container');
-        this.viewportContainer.className = 'seeweb-viewport-container';
-        this.viewportContainer.style.display = 'none';
-        this.moreContent.appendChild(this.viewportContainer);
-    }
-
     init() {
         if (this.isInitialized) return;
 
@@ -241,9 +189,6 @@ class LayoutManager {
             this.choseManager.hideAllMarkers();
         }
 
-        // 先设置状态，再计算
-        this.isMinimized = true;
-
         if (!this.simulatedViewport) {
             document.body.style.width = this.originalBodyStyle.width || '100%';
             document.body.style.marginRight = this.originalBodyStyle.marginRight || '';
@@ -255,10 +200,8 @@ class LayoutManager {
 
         setTimeout(() => {
             this.wrapper.style.display = 'none';
-            // 再次确保计算正确（动画完成后）
-            if (this.simulatedViewport) {
-                this._recalculateViewportScale();
-            }
+            this.isMinimized = true;
+            this._recalculateViewportScale();
         }, 300);
 
         try {
@@ -280,9 +223,6 @@ class LayoutManager {
             this.floatingButton.parentNode.removeChild(this.floatingButton);
         }
 
-        // 先恢复状态
-        this.isMinimized = false;
-
         if (!this.simulatedViewport) {
             document.body.style.width = `calc(100% - ${this.panelWidth}px)`;
             document.body.style.marginRight = `${this.panelWidth}px`;
@@ -297,10 +237,8 @@ class LayoutManager {
             this.choseManager.showAllMarkers();
         }
 
-        // 动画完成后重新计算
-        setTimeout(() => {
-            this._recalculateViewportScale();
-        }, 300);
+        this.isMinimized = false;
+        this._recalculateViewportScale();
     }
 
     hideForSelection() {
@@ -313,20 +251,17 @@ class LayoutManager {
             this.restoreFromMinimized();
         }
 
-        // 设置选择模式状态
-        this.isSelectionMode = true;
-
         if (!this.simulatedViewport) {
             document.body.style.width = this.originalBodyStyle.width || '100%';
             document.body.style.marginRight = this.originalBodyStyle.marginRight || '';
-        } else {
-            this._recalculateViewportScale();
         }
 
         this.rightPanel.style.transform = `translateX(${this.panelWidth}px)`;
 
         setTimeout(() => {
             this.wrapper.style.display = 'none';
+            this.isSelectionMode = true;
+            this._recalculateViewportScale();
         }, 300);
     }
 
@@ -334,9 +269,6 @@ class LayoutManager {
         if (!this.isSelectionMode) return;
 
         const widthToUse = this.savedPanelWidth || this.panelWidth;
-
-        // 先恢复状态
-        this.isSelectionMode = false;
 
         if (!this.simulatedViewport) {
             document.body.style.width = `calc(100% - ${widthToUse}px)`;
@@ -348,22 +280,12 @@ class LayoutManager {
         void this.rightPanel.offsetWidth;
         this.rightPanel.style.transform = 'translateX(0)';
 
-        // 动画完成后重新计算
-        setTimeout(() => {
-            this._recalculateViewportScale();
-        }, 300);
+        this.isSelectionMode = false;
+        this._recalculateViewportScale();
     }
 
     restore() {
         if (!this.isInitialized) return;
-
-        // 清理所有监听器和定时器
-        window.removeEventListener('resize', this._onWindowResize);
-        
-        if (this.viewportUpdateTimeout) {
-            clearTimeout(this.viewportUpdateTimeout);
-            this.viewportUpdateTimeout = null;
-        }
 
         this.resetViewport();
 
@@ -384,7 +306,6 @@ class LayoutManager {
 
         this.isInitialized = false;
         this.isMinimized = false;
-        this.isSelectionMode = false;
     }
 
     addToPanel(element, sectionTitle) {
@@ -476,61 +397,25 @@ class LayoutManager {
             this.resizeObserver.disconnect();
         }
 
-        // 改为监听 window.resize 而不是 body，避免循环触发
-        window.addEventListener('resize', this._onWindowResize);
-        
-        // 保留 ResizeObserver 但增加防循环标志
         this.resizeObserver = new ResizeObserver((entries) => {
-            if (this.isUpdatingViewport) return; // 防止循环触发
-            
             for (const entry of entries) {
                 if (entry.target === document.body && this.simulatedViewport) {
-                    this._debounceRecalculateViewport();
+                    this._recalculateViewportScale();
                 }
             }
         });
 
-        try {
-            this.resizeObserver.observe(document.body);
-        } catch (e) {
-            // 忽略观察错误
-        }
-    }
-
-    _onWindowResize = () => {
-        if (this.simulatedViewport) {
-            this._debounceRecalculateViewport();
-        }
-    };
-
-    _debounceRecalculateViewport() {
-        if (this.viewportUpdateTimeout) {
-            clearTimeout(this.viewportUpdateTimeout);
-        }
-        this.viewportUpdateTimeout = setTimeout(() => {
-            this._recalculateViewportScale();
-        }, 50); // 50ms 防抖
+        this.resizeObserver.observe(document.body);
     }
 
     _recalculateViewportScale() {
-        if (!this.simulatedViewport || this.isUpdatingViewport) return;
+        if (!this.simulatedViewport) return;
 
-        this.isUpdatingViewport = true;
+        const availableWidth = window.innerWidth - (this.isMinimized || this.isSelectionMode ? 0 : this.panelWidth);
+        const scale = Math.min(availableWidth / this.simulatedViewport, 1);
 
-        try {
-            const availableWidth = window.innerWidth - (this.isMinimized || this.isSelectionMode ? 0 : this.panelWidth);
-            const scale = Math.min(availableWidth / this.simulatedViewport, 1);
-
-            document.body.style.transformOrigin = 'top left';
-            document.body.style.transform = `scale(${scale})`;
-            
-            console.log(`🎨 视口重新计算: 目标=${this.simulatedViewport}px, 可用=${availableWidth}px, 缩放=${(scale * 100).toFixed(1)}%`);
-        } finally {
-            // 延迟释放标志，防止立即再次触发
-            setTimeout(() => {
-                this.isUpdatingViewport = false;
-            }, 30);
-        }
+        document.body.style.transformOrigin = 'top left';
+        document.body.style.transform = `scale(${scale})`;
     }
 
     setSimulatedViewport(width) {
@@ -538,8 +423,6 @@ class LayoutManager {
             this.resetViewport();
             return;
         }
-
-        this.isUpdatingViewport = true;
 
         if (!this.originalBodyTransform) {
             this.originalBodyTransform = document.body.style.transform;
@@ -556,33 +439,14 @@ class LayoutManager {
         document.body.style.transformOrigin = 'top left';
         document.body.style.transform = `scale(${scale})`;
         document.body.style.transition = 'transform 0.3s ease';
-
-        console.log(`🎯 设置视口: ${width}px, 缩放=${(scale * 100).toFixed(1)}%`);
-
-        this._updateViewportButtons();
-        this._updateViewportDisplay();
-
-        setTimeout(() => {
-            this.isUpdatingViewport = false;
-        }, 100);
     }
 
     resetViewport() {
-        this.isUpdatingViewport = true;
-        
-        // 移除 window resize 监听
-        window.removeEventListener('resize', this._onWindowResize);
-        
         this.simulatedViewport = null;
 
         if (this.resizeObserver) {
             this.resizeObserver.disconnect();
             this.resizeObserver = null;
-        }
-
-        if (this.viewportUpdateTimeout) {
-            clearTimeout(this.viewportUpdateTimeout);
-            this.viewportUpdateTimeout = null;
         }
 
         document.body.style.transform = this.originalBodyTransform || '';
@@ -595,106 +459,29 @@ class LayoutManager {
             document.body.style.width = this.originalBodyStyle.width || '';
             document.body.style.marginRight = this.originalBodyStyle.marginRight || '';
         }
-
-        console.log('🔄 视口已重置');
-
-        this._updateViewportButtons();
-        this._updateViewportDisplay();
-
-        setTimeout(() => {
-            this.isUpdatingViewport = false;
-        }, 100);
     }
 
-    _handleBackClick() {
-        if (this.currentMode === 'viewport') {
-            this.showMorePanel();
-        } else if (this.currentMode === 'more') {
-            this.showMainPanel();
+    // ==================== 主界面/二级界面切换功能 ====================
+
+    showSecondaryPanel() {
+        if (this.currentMode === 'secondary') return;
+        this.currentMode = 'secondary';
+
+        if (this.viewportController) {
+            this.secondaryContent.appendChild(this.viewportController.getElement());
+            this.viewportController.show();
         }
+
+        this.secondaryContent.classList.remove('seeweb-slide-out');
+        this.secondaryContent.classList.add('seeweb-slide-in');
     }
 
-    _updateToolbar(mode) {
-        const backBtn = this.toolbar.querySelector('.seeweb-toolbar-back-btn');
-        const moreBtn = this.toolbar.querySelector('.seeweb-more-btn');
-
-        if (mode === 'main') {
-            this.toolbarTitle.innerHTML = '<span style="font-size: 24px;">🎨</span> SeeWeb Pro';
-            backBtn.style.display = 'none';
-            moreBtn.style.display = 'flex';
-        } else if (mode === 'more') {
-            this.toolbarTitle.textContent = '更多功能';
-            backBtn.style.display = 'flex';
-            moreBtn.style.display = 'none';
-        } else if (mode === 'viewport') {
-            this.toolbarTitle.textContent = '视口调整';
-            backBtn.style.display = 'flex';
-            moreBtn.style.display = 'none';
-        }
-    }
-
-    // 页面切换功能
     showMainPanel() {
         if (this.currentMode === 'main') return;
         this.currentMode = 'main';
-        this._updateToolbar('main');
 
-        this.mainContent.classList.remove('seeweb-slide-out-left');
-        this.mainContent.classList.add('seeweb-slide-in-left');
-        this.moreContent.classList.remove('seeweb-slide-in');
-        this.moreContent.classList.add('seeweb-slide-out');
-    }
-
-    showMorePanel() {
-        if (this.currentMode === 'more') return;
-        this.currentMode = 'more';
-        this._updateToolbar('more');
-
-        if (this.viewportContainer) {
-            this.viewportContainer.style.display = 'none';
-        }
-
-        this.moreContent.querySelector('.seeweb-more-list').style.display = 'flex';
-
-        this.moreContent.classList.remove('seeweb-slide-out');
-        this.moreContent.classList.add('seeweb-slide-in');
-        this.mainContent.classList.remove('seeweb-slide-in-left');
-        this.mainContent.classList.add('seeweb-slide-out-left');
-    }
-
-    showViewportPanel() {
-        if (this.currentMode === 'viewport') return;
-        this.currentMode = 'viewport';
-        this._updateToolbar('viewport');
-
-        if (this.viewportController && this.viewportContainer) {
-            this.viewportContainer.innerHTML = '';
-            this.viewportContainer.appendChild(this.viewportController.getElement());
-            this.viewportContainer.style.display = 'flex';
-        }
-
-        this.moreContent.querySelector('.seeweb-more-list').style.display = 'none';
-    }
-
-    _updateViewportButtons() {
-        if (!this.viewportContainer) return;
-        const buttons = this.viewportContainer.querySelectorAll('.seeweb-viewport-btn');
-        buttons.forEach(btn => {
-            const btnWidth = btn.dataset.width === 'null' ? null : parseInt(btn.dataset.width);
-            if (btnWidth === this.simulatedViewport || (this.simulatedViewport === null && btn.dataset.width === 'null')) {
-                btn.classList.add('active');
-            } else {
-                btn.classList.remove('active');
-            }
-        });
-    }
-
-    _updateViewportDisplay() {
-        if (!this.viewportContainer) return;
-        const widthSpan = this.viewportContainer.querySelector('.seeweb-viewport-width');
-        if (widthSpan) {
-            widthSpan.textContent = this.simulatedViewport === null ? '自动' : `${this.simulatedViewport}px`;
-        }
+        this.secondaryContent.classList.remove('seeweb-slide-in');
+        this.secondaryContent.classList.add('seeweb-slide-out');
     }
 
     getPanelContent() {
