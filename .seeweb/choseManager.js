@@ -9,31 +9,50 @@ class ChoseManager {
      * 构造函数
      * @param {Object} options - 配置选项
      * @param {Object} options.choseList - 选择列表实例
+     * @param {Object} options.proxyFactory - 代理工厂实例
      */
     constructor(options = {}) {
         // 依赖注入，确保模块松耦合
         this.choseList = options.choseList;
-        
+        this.proxyFactory = options.proxyFactory;
+        this.layoutManager = options.layoutManager;
+
         // 验证必要依赖
         if (!this.choseList) {
             console.warn('ChoseManager: Missing required dependency (choseList)');
         }
-        
+
         // 存储元素与表示框的映射
         this.elementBoxMap = new Map();
-        
+
+        // 计数器，用于生成唯一的代理key
+        this._markerIdCounter = 0;
+
         // 添加CSS样式
         this._addStyles();
-        
+
         // 绑定事件
         this._bindEvents();
     }
     
+    setLayoutManager(lm) {
+        this.layoutManager = lm;
+    }
+
+    _createElement(tag, key) {
+        return this.proxyFactory.createElement(tag, key);
+    }
+
+    // 生成唯一的marker key
+    _generateMarkerKey() {
+        return `choseManager-marker-${Date.now()}-${++this._markerIdCounter}`;
+    }
+
     // 添加CSS样式 - 样式已统一到seeweb.css文件中
     _addStyles() {
         // 样式已统一到seeweb.css文件中，此处不再重复添加
     }
-    
+
     // 绑定事件
     _bindEvents() {
         // 监听choseList的变化
@@ -77,14 +96,14 @@ class ChoseManager {
                 }
             });
         }
-        
+
         // 监听窗口大小变化，同步表示框位置
         window.addEventListener('resize', () => this.syncAllMarkerBoxes());
-        
+
         // 每0.1秒同步一次表示框位置
         setInterval(() => this.syncAllMarkerBoxes(), 10);
     }
-    
+
     /**
      * 为元素创建表示框
      * @param {HTMLElement} element - 要创建表示框的元素
@@ -94,19 +113,22 @@ class ChoseManager {
         if (this.elementBoxMap.has(element)) {
             return;
         }
-        
-        // 创建表示框
-        const markerBox = document.createElement('div');
+
+        // 使用工厂创建表示框，自动注册到代理工厂
+        const markerBox = this._createElement('div', this._generateMarkerKey());
         markerBox.className = 'seeWeb_choseMarker';
-        document.body.appendChild(markerBox);
+        // markerBox.style.cssText = 'z-index: 10000000; pointer-events: none;'; // 提高 z-index
         
+        // 直接插入到 html 下面
+        document.documentElement.appendChild(markerBox);
+
         // 更新表示框位置
         this.updateMarkerBoxPosition(element, markerBox);
-        
+
         // 存储映射关系
         this.elementBoxMap.set(element, markerBox);
     }
-    
+
     /**
      * 更新表示框位置
      * @param {HTMLElement} element - 元素
@@ -120,17 +142,19 @@ class ChoseManager {
             const width = rect.width;
             const height = rect.height;
             const padding = Math.max(2, Math.min(width, height) / 40);
-            
+
             markerBox.style.left = `${x - padding}px`;
             markerBox.style.top = `${y - padding}px`;
             markerBox.style.width = `${width + padding * 2}px`;
             markerBox.style.height = `${height + padding * 2}px`;
             markerBox.style.borderRadius = `${padding}px`;
+            markerBox.style.position = 'fixed'; // 确保是 fixed
+            // markerBox.style.zIndex = '10000000'; // 非常高的 z-index
         } catch (error) {
             console.error('更新表示框位置失败:', error);
         }
     }
-    
+
     /**
      * 移除元素的表示框
      * @param {HTMLElement} element - 要移除表示框的元素
@@ -142,7 +166,7 @@ class ChoseManager {
             this.elementBoxMap.delete(element);
         }
     }
-    
+
     /**
      * 同步所有表示框位置
      */
@@ -151,7 +175,7 @@ class ChoseManager {
             this.updateMarkerBoxPosition(element, markerBox);
         });
     }
-    
+
     /**
      * 隐藏所有标记框
      */
@@ -160,7 +184,7 @@ class ChoseManager {
             markerBox.style.display = 'none';
         });
     }
-    
+
     /**
      * 显示所有标记框
      */

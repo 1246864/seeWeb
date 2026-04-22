@@ -1,0 +1,301 @@
+/**
+ * 选择面板 - 专为右侧面板设计的新一代UI
+ */
+
+class ChosePanel {
+    constructor(options = {}) {
+        this.choseList = options.choseList;
+        this.choseManager = options.choseManager;
+        this.proxyFactory = options.proxyFactory;
+        this.choseDiv = options.choseDiv;
+        this.choseRect = options.choseRect;
+        this.layoutManager = options.layoutManager;
+
+        // 验证必需依赖
+        if (!this.choseList || !this.layoutManager) {
+            throw new Error('ChosePanel: choseList and layoutManager are required');
+        }
+
+        // 存储提示词映射
+        this.elementPromptMap = new Map();
+
+        this._createPanel();
+        this._bindEvents();
+    }
+
+    _createElement(tag, key) {
+        return this.proxyFactory.createElement(tag, key);
+    }
+
+    _createPanel() {
+        this.container = this._createElement('div', 'chose-panel');
+        this.container.className = 'seeweb-chose-panel-container';
+
+        // 1. 模式切换标签
+        const tabs = this._createElement('div', 'chose-tabs');
+        tabs.className = 'seeweb-chose-panel-tabs';
+
+        this.tabCreate = this._createElement('button', 'tab-create');
+        this.tabCreate.className = 'seeweb-chose-panel-tab';
+        this.tabCreate.textContent = '✨ 创建';
+
+        this.tabSelect = this._createElement('button', 'tab-select');
+        this.tabSelect.className = 'seeweb-chose-panel-tab seeweb-chose-panel-tab-active';
+        this.tabSelect.textContent = '🔍 选择';
+
+        tabs.appendChild(this.tabCreate);
+        tabs.appendChild(this.tabSelect);
+
+        // 2. 创建内容区
+        this.contentCreate = this._createElement('div', 'content-create');
+        this.contentCreate.className = 'seeweb-chose-panel-content-create';
+        this.contentCreate.innerHTML = `
+            <div class="seeweb-chose-panel-content-placeholder">
+                <div class="seeweb-chose-panel-content-placeholder-icon">🚧</div>
+                <div>创建功能开发中...</div>
+            </div>
+        `;
+
+        // 3. 选择内容区
+        this.contentSelect = this._createElement('div', 'content-select');
+        this.contentSelect.className = 'seeweb-chose-panel-content-select';
+
+        // --- 选择模式 ---
+        const modeSection = this._createElement('div', 'mode-section');
+        modeSection.innerHTML = `
+            <div class="seeweb-chose-panel-section-title">选择模式</div>
+            <div class="seeweb-chose-panel-section-buttons">
+                <button id="btn-single" class="seeweb-chose-panel-btn seeweb-chose-panel-btn-single">
+                    ◉ 单选
+                </button>
+                <button id="btn-rect" class="seeweb-chose-panel-btn seeweb-chose-panel-btn-rect">
+                    ▢ 扩选
+                </button>
+            </div>
+        `;
+
+        // --- 操作区 ---
+        const actionSection = this._createElement('div', 'action-section');
+        actionSection.innerHTML = `
+            <div class="seeweb-chose-panel-section-title">操作</div>
+            <div class="seeweb-chose-panel-section-buttons">
+                <button id="btn-undo" class="seeweb-chose-panel-btn seeweb-chose-panel-btn-undo">
+                    ↺ 撤销
+                </button>
+                <button id="btn-clear" class="seeweb-chose-panel-btn seeweb-chose-panel-btn-clear">
+                    ✕ 清除
+                </button>
+            </div>
+        `;
+
+        // --- 提示词区 ---
+        const promptSection = this._createElement('div', 'prompt-section');
+        promptSection.innerHTML = `
+            <div class="seeweb-chose-panel-section-title">提示词</div>
+            <div class="seeweb-chose-panel-prompt-wrapper">
+                <textarea id="prompt-textarea" class="seeweb-chose-panel-prompt-textarea" placeholder="请输入对选中元素的修改提示..."></textarea>
+                <button id="btn-send-prompt" class="seeweb-chose-panel-prompt-btn">
+                    🚀 发送提示词
+                </button>
+            </div>
+        `;
+
+        // --- 选中元素列表 ---
+        this.listSection = this._createElement('div', 'list-section');
+        this.listSection.innerHTML = `
+            <div class="seeweb-chose-panel-section-title">
+                已选中 (<span id="list-count">0</span>)
+            </div>
+            <div id="selected-list" class="seeweb-chose-panel-list-container">
+                <div class="seeweb-chose-panel-list-empty">
+                    暂无选中元素
+                </div>
+            </div>
+        `;
+
+        this.contentSelect.appendChild(modeSection);
+        this.contentSelect.appendChild(actionSection);
+        this.contentSelect.appendChild(promptSection);
+        this.contentSelect.appendChild(this.listSection);
+
+        // 组装
+        this.container.appendChild(tabs);
+        this.container.appendChild(this.contentCreate);
+        this.container.appendChild(this.contentSelect);
+    }
+
+    _bindEvents() {
+        // 标签切换
+        this.tabCreate.addEventListener('click', () => {
+            this.tabCreate.classList.add('seeweb-chose-panel-tab-active');
+            this.tabSelect.classList.remove('seeweb-chose-panel-tab-active');
+            this.contentCreate.style.display = 'block';
+            this.contentSelect.style.display = 'none';
+
+            if (this.choseManager) this.choseManager.hideAllMarkers();
+        });
+
+        this.tabSelect.addEventListener('click', () => {
+            this.tabSelect.classList.add('seeweb-chose-panel-tab-active');
+            this.tabCreate.classList.remove('seeweb-chose-panel-tab-active');
+            this.contentSelect.style.display = 'flex';
+            this.contentCreate.style.display = 'none';
+
+            if (this.choseManager) this.choseManager.showAllMarkers();
+        });
+
+        // 按钮事件
+        const btnSingle = this.container.querySelector('#btn-single');
+        btnSingle.addEventListener('click', () => {
+            if (this.choseDiv) {
+                if (this.choseRect) this.choseRect.disable();
+                this.choseDiv.enable();
+            }
+        });
+
+        const btnRect = this.container.querySelector('#btn-rect');
+        btnRect.addEventListener('click', () => {
+            if (this.choseRect) {
+                if (this.choseDiv) this.choseDiv.disable();
+                this.choseRect.enable();
+            }
+        });
+
+        const btnUndo = this.container.querySelector('#btn-undo');
+        btnUndo.addEventListener('click', () => {
+            if (this.choseList) this.choseList.undo();
+        });
+
+        const btnClear = this.container.querySelector('#btn-clear');
+        btnClear.addEventListener('click', () => {
+            if (this.choseList) this.choseList.clear();
+        });
+
+        const btnSendPrompt = this.container.querySelector('#btn-send-prompt');
+        btnSendPrompt.addEventListener('click', () => {
+            this._onSendPrompt();
+        });
+
+        // 监听选择列表变化
+        if (this.choseList) {
+            this.choseList.on(() => {
+                this._updateList();
+            });
+        }
+    }
+
+    _updateList() {
+        const listCount = this.container.querySelector('#list-count');
+        const selectedList = this.container.querySelector('#selected-list');
+
+        if (!this.choseList) return;
+
+        const elements = this.choseList.getList();
+        listCount.textContent = elements.length;
+
+        if (elements.length === 0) {
+            selectedList.innerHTML = `
+                <div class="seeweb-chose-panel-list-empty">
+                    暂无选中元素
+                </div>
+            `;
+        } else {
+            selectedList.innerHTML = elements.map((el, index) => {
+                const tagName = el.tagName.toLowerCase();
+                const id = el.id ? `#${el.id}` : '';
+                const className = el.className ? `.${el.className.split(' ')[0]}` : '';
+
+                return `
+                    <div class="seeweb-chose-panel-list-item">
+                        <div class="seeweb-chose-panel-list-item-tag">
+                            <span class="seeweb-chose-panel-list-item-tag-prefix">&lt;</span>${tagName}<span class="seeweb-chose-panel-list-item-tag-suffix">${id}${className}</span><span class="seeweb-chose-panel-list-item-tag-prefix">&gt;</span>
+                        </div>
+                        <button data-index="${index}" class="seeweb-chose-panel-list-item-remove">×</button>
+                    </div>
+                `;
+            }).join('');
+
+            // 绑定删除按钮
+            selectedList.querySelectorAll('button').forEach(btn => {
+                btn.addEventListener('click', (e) => {
+                    const index = parseInt(e.target.dataset.index);
+                    const el = elements[index];
+                    if (el && this.choseList) {
+                        this.choseList.remove(el);
+                    }
+                });
+            });
+        }
+    }
+
+    _onSendPrompt() {
+        const textarea = this.container.querySelector('#prompt-textarea');
+        const prompt = textarea.value.trim();
+
+        if (!this.choseList) {
+            return;
+        }
+
+        const elements = this.choseList.getList();
+
+        if (elements.length === 0) {
+            return;
+        }
+
+        if (!prompt) {
+            return;
+        }
+
+        elements.forEach(element => {
+            this.elementPromptMap.set(element, prompt);
+        });
+
+        // 清空输入框
+        textarea.value = '';
+    }
+
+    getPromptMap() {
+        return this.elementPromptMap;
+    }
+
+    getPromptForElement(element) {
+        return this.elementPromptMap.get(element);
+    }
+
+    getAllPrompts() {
+        const result = [];
+        this.elementPromptMap.forEach((prompt, element) => {
+            result.push({
+                element: element,
+                prompt: prompt,
+                tagName: element.tagName,
+                outerHTML: element.outerHTML
+            });
+        });
+        return result;
+    }
+
+    clearPrompts() {
+        this.elementPromptMap.clear();
+    }
+
+    /**
+     * 获取容器元素，用于添加到布局
+     */
+    getElement() {
+        return this.container;
+    }
+}
+
+// 导出
+if (typeof window !== 'undefined') {
+    window.ChosePanel = ChosePanel;
+}
+
+if (typeof module !== 'undefined' && module.exports) {
+    module.exports = ChosePanel;
+}
+
+if (typeof exports !== 'undefined' && !exports.default) {
+    exports.default = ChosePanel;
+}

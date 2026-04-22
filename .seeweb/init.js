@@ -1,70 +1,95 @@
 /**
- * 初始化文件
- * 功能：初始化所有模块，处理依赖注入，确保模块间正确连接
- * 职责：负责创建所有实例并管理它们之间的依赖关系
+ * 初始化文件 - Pro 版本
+ * 功能：使用新的布局架构
  */
 
 class SeeWebInit {
     /**
-     * 初始化所有模块
+     * 初始化所有模块 - Pro 版本
      * @returns {Object} 包含所有实例的对象
      */
     static init() {
         try {
-            // 1. 创建选择列表实例（核心数据存储）
+            console.log('🎨 SeeWeb Pro 开始初始化...');
+
+            // 1. 代理工厂
+            const proxyFactory = new window.ProxyFactory();
+
+            // 2. 布局管理器
+            const layoutManager = new window.LayoutManager({
+                proxyFactory: proxyFactory
+            });
+
+            // 3. 选择列表
             const choseList = new window.ChoseList();
-            
-            // 2. 创建选择管理器实例（需要在choseUI之前创建，以便注入）
+
+            // 4. 选择管理器
             const choseManager = new window.ChoseManager({
-                choseList: choseList
-            });
-            
-            // 3. 创建选择模式UI实例
-            const choseUI = new window.ChoseUI({
                 choseList: choseList,
-                choseManager: choseManager
-                // choseDiv 和 choseRect 将在后面注入
+                proxyFactory: proxyFactory
             });
             
-            // 4. 创建单选模式选择器实例
+            // 互相注入
+            layoutManager.setChoseManager(choseManager);
+            choseManager.setLayoutManager(layoutManager);
+
+            // 5. 单选和扩选
             const choseDiv = new window.ChoseDiv({
                 choseList: choseList,
-                choseUI: choseUI
+                proxyFactory: proxyFactory,
+                layoutManager: layoutManager
             });
-            
-            // 5. 创建扩选模式选择器实例
+
             const choseRect = new window.ChoseRect({
                 choseList: choseList,
-                choseUI: choseUI
+                proxyFactory: proxyFactory,
+                layoutManager: layoutManager
             });
-            
-            // 6. 注入依赖到 choseUI
-            choseUI.choseDiv = choseDiv;
-            choseUI.choseRect = choseRect;
-            
-            // 7. 导出所有实例
+
+            // 6. 新的选择面板
+            const chosePanel = new window.ChosePanel({
+                choseList: choseList,
+                choseManager: choseManager,
+                proxyFactory: proxyFactory,
+                choseDiv: choseDiv,
+                choseRect: choseRect,
+                layoutManager: layoutManager
+            });
+
+            // 7. 初始化布局
+            layoutManager.init();
+
+            // 8. 把面板加到右侧面板中
+            layoutManager.addToPanel(chosePanel.getElement(), '⚙️ 选择控制');
+
+            // 9. 全局导出
             const instances = {
+                layoutManager,
                 choseList,
+                choseManager,
                 choseDiv,
                 choseRect,
-                choseUI,
-                choseManager
+                chosePanel,
+                proxyFactory
             };
-            
-            // 8. 全局导出
+
             if (typeof window !== 'undefined') {
                 window.seeWeb = instances;
+                window.layoutManager = layoutManager;
                 window.choseList = choseList;
+                window.choseManager = choseManager;
                 window.choseDiv = choseDiv;
                 window.choseRect = choseRect;
-                window.choseUI = choseUI;
-                window.choseManager = choseManager;
+                window.chosePanel = chosePanel;
+                window.proxyFactory = proxyFactory;
             }
-            
-            console.log('SeeWeb 初始化完成');
+
+            console.log('🎉 SeeWeb Pro 初始化完成！');
+            console.log('📐 布局已创建');
+
             return instances;
         } catch (error) {
-            console.error('SeeWeb 初始化失败:', error);
+            console.error('💥 SeeWeb Pro 初始化失败:', error);
             return null;
         }
     }
